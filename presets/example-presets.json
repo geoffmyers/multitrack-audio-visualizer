@@ -1,0 +1,282 @@
+[
+  {
+    "id": "preset_1766527694667_4wbo9l9",
+    "name": "Waveform Overlay 1",
+    "settings": {
+      "layout": "overlay",
+      "amplitudeMode": "individual",
+      "heightPercent": 100,
+      "smoothingLevel": 0,
+      "fpsCap": 60,
+      "windowDuration": 1
+    },
+    "createdAt": 1766527694667,
+    "updatedAt": 1766583347593
+  },
+  {
+    "id": "preset_1766527826110_51bsul5",
+    "name": "Waveform Stacked 1",
+    "settings": {
+      "layout": "stacked",
+      "amplitudeMode": "individual",
+      "heightPercent": 20,
+      "smoothingLevel": 0,
+      "fpsCap": 60,
+      "windowDuration": 10
+    },
+    "createdAt": 1766527826110,
+    "updatedAt": 1766583358349
+  },
+  {
+    "id": "preset_1766527908655_6xept03",
+    "name": "Spectrum Overlay 1",
+    "settings": {
+      "layout": "spectrum-overlay",
+      "amplitudeMode": "individual",
+      "heightPercent": 25,
+      "smoothingLevel": 0,
+      "fpsCap": 60,
+      "windowDuration": 0.1
+    },
+    "createdAt": 1766527908655,
+    "updatedAt": 1766583367540
+  },
+  {
+    "id": "preset_1766527956838_v7i60qv",
+    "name": "Spectrum Stacked 1",
+    "settings": {
+      "layout": "spectrum-stacked",
+      "amplitudeMode": "individual",
+      "heightPercent": 2,
+      "smoothingLevel": 0,
+      "fpsCap": 60,
+      "windowDuration": 0.1
+    },
+    "createdAt": 1766527956838,
+    "updatedAt": 1766583378164
+  },
+  {
+    "id": "preset_1766528155183_9udhqcn",
+    "name": "Waveform Stacked 2",
+    "settings": {
+      "layout": "stacked",
+      "amplitudeMode": "normalized",
+      "heightPercent": 25,
+      "smoothingLevel": 0,
+      "fpsCap": 60,
+      "windowDuration": 0.1
+    },
+    "createdAt": 1766528155183,
+    "updatedAt": 1766583396967
+  },
+  {
+    "id": "preset_1766528351656_f2poott",
+    "name": "Waveform Overlay 2",
+    "settings": {
+      "layout": "overlay",
+      "amplitudeMode": "individual",
+      "heightPercent": 50,
+      "smoothingLevel": 0,
+      "fpsCap": 60,
+      "windowDuration": 10
+    },
+    "createdAt": 1766528351656,
+    "updatedAt": 1766583407707
+  },
+  {
+    "id": "preset_1766528431460_6lvzxg0",
+    "name": "Waveform Overlay 3",
+    "settings": {
+      "layout": "overlay",
+      "amplitudeMode": "normalized",
+      "heightPercent": 50,
+      "smoothingLevel": 0,
+      "fpsCap": 15,
+      "windowDuration": 0.01
+    },
+    "createdAt": 1766528431460,
+    "updatedAt": 1766583418304
+  },
+  {
+    "id": "preset_1766528987357_adooyij",
+    "name": "Waveform Overlay 4",
+    "settings": {
+      "layout": "overlay",
+      "amplitudeMode": "normalized",
+      "heightPercent": 50,
+      "smoothingLevel": 5,
+      "fpsCap": 15,
+      "windowDuration": 0.01
+    },
+    "createdAt": 1766528987357,
+    "updatedAt": 1766583426023
+  },
+  {
+    "id": "preset_1766529088513_77v3g16",
+    "name": "Waveform Overlay 5",
+    "settings": {
+      "layout": "overlay",
+      "amplitudeMode": "individual",
+      "heightPercent": 50,
+      "smoothingLevel": 5,
+      "fpsCap": 30,
+      "windowDuration": 0.1
+    },
+    "createdAt": 1766529088513,
+    "updatedAt": 1766583433835
+  },
+  {
+    "id": "preset_1766529737017_silo8jw",
+    "name": "Waveform Stacked 3",
+    "settings": {
+      "layout": "stacked",
+      "amplitudeMode": "individual",
+      "heightPercent": 100,
+      "smoothingLevel": 0,
+      "fpsCap": 60,
+      "windowDuration": 10
+    },
+    "createdAt": 1766529737017,
+    "updatedAt": 1766583445383
+  },
+  {
+    "id": "preset_1766531024469_t4ftiv6",
+    "name": "Waveform Stacked 4",
+    "settings": {
+      "layout": "stacked",
+      "amplitudeMode": "normalized",
+      "heightPercent": 25,
+      "smoothingLevel": 5,
+      "fpsCap": 60,
+      "windowDuration": 29.99
+    },
+    "createdAt": 1766531024470,
+    "updatedAt": 1766583457499
+  },
+  {
+    "id": "preset_1766535747528_k5955bf",
+    "name": "Waveform Additive 1",
+    "settings": {
+      "layout": "overlay-additive",
+      "amplitudeMode": "normalized",
+      "heightPercent": 50,
+      "smoothingLevel": 5,
+      "fpsCap": 60,
+      "windowDuration": 10
+    },
+    "createdAt": 1766535747528,
+    "updatedAt": 1766583468124
+  },
+  {
+    "id": "preset_1766535821955_ppcwryh",
+    "name": "Waveform Additive 2",
+    "settings": {
+      "layout": "overlay-additive",
+      "amplitudeMode": "normalized",
+      "heightPercent": 100,
+      "smoothingLevel": 0,
+      "fpsCap": 60,
+      "windowDuration": 10
+    },
+    "createdAt": 1766535821955,
+    "updatedAt": 1766583475359
+  },
+  {
+    "id": "preset_1766535855371_fe6gbqg",
+    "name": "Waveform Additive 3",
+    "settings": {
+      "layout": "overlay-additive",
+      "amplitudeMode": "normalized",
+      "heightPercent": 50,
+      "smoothingLevel": 5,
+      "fpsCap": 60,
+      "windowDuration": 10
+    },
+    "createdAt": 1766535855371,
+    "updatedAt": 1766583486049
+  },
+  {
+    "id": "preset_1766535912838_uew7ube",
+    "name": "Waveform Additive 4",
+    "settings": {
+      "layout": "overlay-additive",
+      "amplitudeMode": "individual",
+      "heightPercent": 50,
+      "smoothingLevel": 0,
+      "fpsCap": 60,
+      "windowDuration": 10
+    },
+    "createdAt": 1766535912838,
+    "updatedAt": 1766583494615
+  },
+  {
+    "id": "preset_1766535944652_jemc8oc",
+    "name": "Waveform Additive 5",
+    "settings": {
+      "layout": "overlay-additive",
+      "amplitudeMode": "individual",
+      "heightPercent": 50,
+      "smoothingLevel": 5,
+      "fpsCap": 60,
+      "windowDuration": 10
+    },
+    "createdAt": 1766535944652,
+    "updatedAt": 1766583506195
+  },
+  {
+    "id": "preset_1766537455461_bulfj3s",
+    "name": "Waveform Additive 6",
+    "settings": {
+      "layout": "overlay-additive",
+      "amplitudeMode": "normalized",
+      "heightPercent": 50,
+      "smoothingLevel": 1,
+      "fpsCap": 15,
+      "windowDuration": 0.01
+    },
+    "createdAt": 1766537455461,
+    "updatedAt": 1766583519642
+  },
+  {
+    "id": "preset_1766537507679_ssk6cwk",
+    "name": "Waveform Additive 7",
+    "settings": {
+      "layout": "overlay-additive",
+      "amplitudeMode": "individual",
+      "heightPercent": 100,
+      "smoothingLevel": 5,
+      "fpsCap": 15,
+      "windowDuration": 0.01
+    },
+    "createdAt": 1766537507679,
+    "updatedAt": 1766583536168
+  },
+  {
+    "id": "preset_1766537634860_pai5xzs",
+    "name": "Waveform Additive 8",
+    "settings": {
+      "layout": "overlay-additive",
+      "amplitudeMode": "individual",
+      "heightPercent": 50,
+      "smoothingLevel": 0,
+      "fpsCap": 15,
+      "windowDuration": 0.1
+    },
+    "createdAt": 1766537634860,
+    "updatedAt": 1766583544618
+  },
+  {
+    "id": "preset_1766537742736_fsh9kov",
+    "name": "Waveform Additive 9",
+    "settings": {
+      "layout": "overlay-additive",
+      "amplitudeMode": "individual",
+      "heightPercent": 50,
+      "smoothingLevel": 5,
+      "fpsCap": 15,
+      "windowDuration": 60.05
+    },
+    "createdAt": 1766537742736,
+    "updatedAt": 1766583553201
+  }
+]

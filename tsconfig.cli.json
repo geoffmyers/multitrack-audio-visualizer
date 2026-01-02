@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "outDir": "./dist-cli",
+    "rootDir": ".",
+    "noEmit": true
+  },
+  "include": [
+    "cli/**/*",
+    "src/core/AudioTrack.ts",
+    "src/types/**/*",
+    "src/visualization/ColorManager.ts",
+    "src/rendering/RenderContext.ts",
+    "src/rendering/WaveformRenderer.ts"
+  ],
+  "exclude": ["node_modules", "dist", "dist-cli", "src/main.ts", "src/ui/**/*"]
+}

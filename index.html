@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Track Audio Visualizer</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: #1a1a1a;
+        color: #ffffff;
+        overflow: hidden;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #app {
+        display: grid;
+        grid-template-columns: 1fr clamp(250px, 20vw, 400px);
+        grid-template-rows: 1fr auto;
+        height: 100vh;
+        width: 100vw;
+      }
+
+      #canvas-container {
+        grid-column: 1;
+        grid-row: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
+        position: relative;
+        overflow: hidden;
+      }
+
+      #visualizer-canvas {
+        max-width: 100%;
+        max-height: 100%;
+        border: 1px solid #333;
+        object-fit: contain;
+      }
+
+      #sidebar {
+        grid-column: 2;
+        grid-row: 1 / 3;
+        background: #2a2a2a;
+        padding: 20px;
+        overflow-y: auto;
+        border-left: 1px solid #444;
+      }
+
+      #controls {
+        grid-column: 1;
+        grid-row: 2;
+        background: #2a2a2a;
+        padding: 20px;
+        border-top: 1px solid #444;
+      }
+
+      .controls-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        max-width: 100%;
+      }
+
+      @media (min-width: 1400px) {
+        .controls-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      @media (min-width: 1000px) and (max-width: 1399px) {
+        .controls-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      @media (min-width: 600px) and (max-width: 999px) {
+        .controls-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 599px) {
+        .controls-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .control-group {
+        margin-bottom: 0;
+      }
+
+      .control-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 12px;
+        color: #aaa;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      button {
+        background: #4a9eff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background 0.2s;
+      }
+
+      button:hover {
+        background: #3a8eef;
+      }
+
+      button:disabled {
+        background: #555;
+        cursor: not-allowed;
+      }
+
+      button.secondary {
+        background: #555;
+      }
+
+      button.secondary:hover {
+        background: #666;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        height: 4px;
+        border-radius: 2px;
+        background: #444;
+        outline: none;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #4a9eff;
+        cursor: pointer;
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #4a9eff;
+        cursor: pointer;
+        border: none;
+      }
+
+      input[type="color"] {
+        width: 100%;
+        height: 32px;
+        border: 1px solid #444;
+        border-radius: 4px;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #444;
+        border-radius: 4px;
+        background: #333;
+        color: #fff;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      select:focus {
+        outline: none;
+        border-color: #4a9eff;
+      }
+
+      .playback-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .playback-controls button {
+        flex-shrink: 0;
+      }
+
+      .time-display {
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        color: #aaa;
+        min-width: 120px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+
+      .timeline-wrapper {
+        flex: 1;
+        min-width: 0;
+      }
+
+      #track-list {
+        margin-top: 20px;
+      }
+
+      .track-item {
+        background: #333;
+        padding: 12px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        border-left: 4px solid #4a9eff;
+      }
+
+      .track-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .track-name {
+        font-size: 13px;
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
+      }
+
+      .track-remove {
+        background: #d9534f;
+        padding: 4px 8px;
+        font-size: 12px;
+        margin-left: 8px;
+      }
+
+      .track-remove:hover {
+        background: #c9302c;
+      }
+
+      .track-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 8px;
+      }
+
+      .track-control {
+        font-size: 11px;
+      }
+
+      .track-control label {
+        font-size: 10px;
+        margin-bottom: 3px;
+      }
+
+      h2 {
+        font-size: 16px;
+        margin-bottom: 15px;
+        color: #4a9eff;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      #add-track-btn {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+
+      #export-btn {
+        width: 100%;
+        background: #5cb85c;
+      }
+
+      #export-btn:hover {
+        background: #4cae4c;
+      }
+
+      .export-progress {
+        display: none;
+        margin-top: 10px;
+      }
+
+      .export-progress.active {
+        display: block;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 20px;
+        background: #333;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 5px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: #5cb85c;
+        transition: width 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+      }
+
+      .drop-zone {
+        border: 2px dashed #444;
+        border-radius: 4px;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 15px;
+        transition: border-color 0.2s;
+      }
+
+      .drop-zone.drag-over {
+        border-color: #4a9eff;
+        background: rgba(74, 158, 255, 0.1);
+      }
+
+      .drop-zone p {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 10px;
+      }
+
+      #loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      #loading-overlay.active {
+        display: flex;
+      }
+
+      .spinner {
+        border: 4px solid #333;
+        border-top: 4px solid #4a9eff;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+      <div id="canvas-container">
+        <canvas id="visualizer-canvas"></canvas>
+      </div>
+      <div id="controls">
+        <div class="playback-controls">
+          <button id="play-pause-btn" disabled>Play</button>
+          <div class="time-display">
+            <span id="current-time">00:00</span> / <span id="total-time">00:00</span>
+          </div>
+          <div class="timeline-wrapper">
+            <input type="range" id="seek-bar" min="0" max="100" value="0" disabled>
+          </div>
+        </div>
+        <div class="controls-grid">
+          <div class="control-group">
+            <label>Layout</label>
+            <select id="layout-select">
+              <option value="overlay">Waveform Overlay</option>
+              <option value="overlay-additive">Waveform Additive</option>
+              <option value="stacked">Waveform Stacked</option>
+              <option value="spectrum-overlay">Spectrum Overlay</option>
+              <option value="spectrum-stacked">Spectrum Stacked</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label>Amplitude</label>
+            <select id="amplitude-select">
+              <option value="individual">Individual</option>
+              <option value="normalized">Normalized</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label>Height: <span id="height-value">50%</span></label>
+            <input type="range" id="height-slider" min="1" max="100" value="50" step="1">
+          </div>
+          <div class="control-group">
+            <label>Smoothing: <span id="smoothing-value">0</span></label>
+            <input type="range" id="smoothing-slider" min="0" max="5" value="0" step="1">
+          </div>
+          <div class="control-group">
+            <label>FPS Cap: <span id="fps-value">60</span></label>
+            <input type="range" id="fps-slider" min="15" max="60" value="60" step="5">
+          </div>
+          <div class="control-group">
+            <label>Window Duration: <span id="window-duration-value">1.00s</span></label>
+            <input type="range" id="window-duration-slider" min="0.01" max="100" value="1" step="0.01">
+          </div>
+        </div>
+      </div>
+      <div id="sidebar">
+        <h2>Presets</h2>
+        <div class="control-group">
+          <select id="preset-select">
+            <option value="">-- Select Preset --</option>
+          </select>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px;">
+          <button id="save-preset-btn" class="secondary" style="font-size: 12px; padding: 8px;">Save</button>
+          <button id="rename-preset-btn" class="secondary" style="font-size: 12px; padding: 8px;" disabled>Rename</button>
+          <button id="delete-preset-btn" class="secondary" style="font-size: 12px; padding: 8px;" disabled>Delete</button>
+          <button id="import-preset-btn" class="secondary" style="font-size: 12px; padding: 8px;">Import</button>
+          <button id="export-preset-btn" class="secondary" style="font-size: 12px; padding: 8px;" disabled>Export</button>
+          <button id="export-all-presets-btn" class="secondary" style="font-size: 12px; padding: 8px;" disabled>Export All</button>
+        </div>
+        <input type="file" id="preset-file-input" accept=".json" style="display: none">
+
+        <h2>Tracks</h2>
+        <div class="drop-zone" id="drop-zone">
+          <p>Drop WAV files here</p>
+          <input type="file" id="file-input" accept=".wav" multiple style="display: none">
+          <button id="add-track-btn">Add Track(s)</button>
+        </div>
+        <div id="track-list"></div>
+        <h2 style="margin-top: 30px;">Export</h2>
+        <button id="export-btn" disabled>Export Video (MP4/H.265)</button>
+        <div class="export-progress" id="export-progress">
+          <label>Exporting...</label>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill">0%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="loading-overlay">
+      <div class="spinner"></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+
+</html>
