@@ -208,17 +208,6 @@ The `heightPx` parameter (default: 400px) controls waveform amplitude:
 - CSS maintains 1920x1080 display size while allowing internal canvas to grow
 - **Centering behavior**: Overlay and spectrum-overlay modes always use base canvas center (y=540px for 1080px height) regardless of expanded canvas size, ensuring waveforms remain visually centered in the viewport
 
-## Console Logging
-
-Extensive logging in `AudioEngine` (prefix: `[AudioEngine]`) tracks:
-
-- Track loading with timing metrics
-- Playback state changes (play/pause)
-- Seek operations with before/after positions
-- Timing calculations for debugging synchronization issues
-
-See [CONSOLE_LOGGING.md](CONSOLE_LOGGING.md) for complete logging reference.
-
 ## TypeScript Types
 
 Key type definitions in [src/types/](src/types/):

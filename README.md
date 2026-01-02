@@ -2,6 +2,38 @@
 
 A real-time audio/music visualizer that displays multi-track waveforms with customizable colors and can export high-quality MP4/H.265 videos.
 
+## Visual Examples
+
+### Overlay Mode
+
+Overlaid waveforms with transparency blending, centered on canvas.
+
+![Overlay Visualization](images/waveform-overlay-example-01.png)
+
+### Overlay Additive Mode
+
+Overlaid waveforms with additive blending for vibrant, bright colors.
+
+![Overlay Additive Visualization](images/waveform-additive-example-01.png)
+
+### Stacked Mode
+
+Vertically stacked waveforms, each in its own track space.
+
+![Stacked Visualization](images/waveform-stacked-example-01.png)
+
+### Spectrum Overlay Mode
+
+FFT frequency spectrum analysis, overlaid and centered.
+
+![Spectrum Overlay Visualization](images/spectrum-overlay-example-01.png)
+
+### Spectrum Stacked Mode
+
+FFT frequency spectrum analysis, vertically stacked.
+
+![Spectrum Stacked Visualization](images/spectrum-stacked-example-01.png)
+
 ## Features
 
 - **Multi-Track Support**: Load multiple WAV files simultaneously
@@ -18,11 +50,13 @@ A real-time audio/music visualizer that displays multi-track waveforms with cust
 ## Installation
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -46,6 +80,7 @@ npm run dev
 ### Track Customization
 
 Each track has individual controls:
+
 - **Color**: Click the color picker to change the track color
 - **Opacity**: Adjust transparency with the opacity slider
 - **Remove**: Click the × button to remove a track
@@ -60,6 +95,7 @@ Each track has individual controls:
 4. Video will automatically download when complete
 
 Export settings:
+
 - Format: MP4 (H.265/HEVC codec)
 - Resolution: 1920x1080
 - Frame Rate: 60fps
@@ -81,23 +117,20 @@ npm run export -- export \
   --audio "track1.wav,track2.wav" \
   --preset "Waveform Overlay 1" \
   --output video.mp4
-
-# Batch export all songs (pre-configured)
-./batch-export.sh
 ```
 
-**Pre-configured exports:** See [export-configs/](export-configs/) for ready-to-use configurations for all songs in the WAV directory.
-
-**See [CLI-README.md](CLI-README.md) for complete CLI documentation.**
+**See [docs/CLI_README.md](docs/CLI_README.md) for complete CLI documentation.**
 
 ## Browser Compatibility
 
 ### Required Features
+
 - Web Audio API
 - HTML5 Canvas
 - SharedArrayBuffer (for FFmpeg.wasm)
 
 ### Supported Browsers
+
 - Chrome 90+
 - Firefox 90+
 - Safari 14+
@@ -106,6 +139,7 @@ npm run export -- export \
 ### IMPORTANT: CORS Headers
 
 This application requires special HTTP headers for video export:
+
 - `Cross-Origin-Opener-Policy: same-origin`
 - `Cross-Origin-Embedder-Policy: require-corp`
 
@@ -162,22 +196,26 @@ This creates a dynamic, scrolling visualization where you see the audio waveform
 ## Troubleshooting
 
 ### Audio won't play
+
 - Ensure files are valid WAV format
 - Check browser console for errors
 - Try clicking on the page first (browsers require user interaction)
 
 ### Video export fails
+
 - Ensure browser supports SharedArrayBuffer
 - Check that COOP/COEP headers are set
 - Try with shorter audio duration first
 - Check browser console for FFmpeg errors
 
 ### Performance issues
+
 - Reduce number of simultaneous tracks
 - Lower opacity for better blending performance
 - Close other browser tabs
 
 ### Files won't load
+
 - Only WAV files are supported
 - Ensure files aren't corrupted
 - Check file size (very large files may take time)
@@ -205,6 +243,7 @@ MIT
 ## Credits
 
 Built with:
+
 - [Vite](https://vitejs.dev/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [FFmpeg.wasm](https://ffmpegwasm.netlify.app/)
