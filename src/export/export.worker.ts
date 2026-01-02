@@ -156,7 +156,8 @@ async function exportVideo(data: {
   // Read output file
   console.log('[Worker] Reading output.mp4...');
   const outputData = await ffmpeg.readFile('output.mp4');
-  console.log('[Worker] Output file read, size:', outputData.byteLength, 'bytes');
+  const outputSize = outputData instanceof Uint8Array ? outputData.byteLength : outputData.length;
+  console.log('[Worker] Output file read, size:', outputSize, 'bytes');
 
   // Clean up files
   self.postMessage({ type: 'status', message: 'Cleaning up...' });
@@ -182,11 +183,15 @@ async function exportVideo(data: {
 
   // Send result
   const buffer = outputData instanceof Uint8Array ? outputData.buffer : outputData;
-  console.log('[Worker] Sending complete message with data size:', buffer.byteLength);
+  const bufferSize =
+    buffer instanceof ArrayBuffer || buffer instanceof SharedArrayBuffer
+      ? buffer.byteLength
+      : buffer.length;
+  console.log('[Worker] Sending complete message with data size:', bufferSize);
   self.postMessage({
     type: 'complete',
     data: outputData
-  }, { transfer: [buffer] } as any);
+  }, { transfer: buffer instanceof ArrayBuffer ? [buffer] : [] } as any);
   console.log('[Worker] Complete message sent');
 }
 

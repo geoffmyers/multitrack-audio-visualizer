@@ -2,6 +2,7 @@
   "name": "multitrack-audio-visualizer",
   "version": "1.0.0",
   "type": "module",
+  "license": "GPL-2.0-or-later",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

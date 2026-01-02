@@ -54,6 +54,9 @@ class MultitrackAudioVisualizer {
     // Initialize preset manager
     this.presetManager = new PresetManager();
 
+    // Load built-in presets (async, but don't block initialization)
+    this.loadBuiltInPresets();
+
     // Initialize UI
     this.controls = new Controls(this.audioEngine);
     this.trackControls = new TrackControls(this.audioEngine, () => this.render());
@@ -256,6 +259,13 @@ class MultitrackAudioVisualizer {
       console.log('[MultitrackAudioVisualizer] Loading active preset:', activePreset.name);
       this.applySettings(activePreset.settings);
     }
+  }
+
+  /**
+   * Load built-in presets from JSON file
+   */
+  private async loadBuiltInPresets(): Promise<void> {
+    await this.presetManager.loadBuiltInPresets();
   }
 }
 

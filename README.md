@@ -34,6 +34,32 @@ FFT frequency spectrum analysis, vertically stacked.
 
 ![Spectrum Stacked Visualization](images/spectrum-stacked-example-01.png)
 
+## User Interface
+
+### Waveform Overlay Interface
+
+Multi-track overlay mode with preset controls and individual track customization.
+
+![Waveform Overlay UI](images/screenshot-waveform-overlay-1.png)
+
+### Waveform Stacked Interface
+
+Vertically stacked waveforms showing individual track separation.
+
+![Waveform Stacked UI](images/screenshot-waveform-stacked-1.png)
+
+### Waveform Additive Interface
+
+Additive blending mode with vibrant, overlapping colors.
+
+![Waveform Additive UI](images/screenshot-waveform-additive-9.png)
+
+### Spectrum Overlay Interface
+
+FFT frequency spectrum visualization with preset management.
+
+![Spectrum Overlay UI](images/screenshot-spectrum-overlay-1.png)
+
 ## Features
 
 - **Multi-Track Support**: Load multiple WAV files simultaneously
@@ -238,7 +264,7 @@ npm run preview
 
 ## License
 
-MIT
+GNU General Public License v2.0 or later (GPL-2.0-or-later). See [LICENSE.md](LICENSE.md) for details.
 
 ## Credits
 

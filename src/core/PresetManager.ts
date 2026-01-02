@@ -16,6 +16,32 @@ export class PresetManager extends EventTarget {
   }
 
   /**
+   * Load built-in presets from JSON file (call this after construction)
+   */
+  public async loadBuiltInPresets(): Promise<void> {
+    try {
+      // Check if we already have presets (don't overwrite user's presets)
+      if (this.collection.presets.length > 0) {
+        console.log('[PresetManager] Skipping built-in presets - user presets already exist');
+        return;
+      }
+
+      // Fetch built-in presets from JSON file
+      const response = await fetch('/presets/all-presets.json');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch presets: ${response.statusText}`);
+      }
+
+      const presetsJson = await response.text();
+      const importedPresets = this.importPresets(presetsJson);
+      console.log('[PresetManager] Loaded', importedPresets.length, 'built-in presets');
+    } catch (error) {
+      console.warn('[PresetManager] Failed to load built-in presets:', error);
+      // Don't throw - app should work without built-in presets
+    }
+  }
+
+  /**
    * Get all presets
    */
   public getPresets(): Preset[] {
