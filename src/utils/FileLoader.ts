@@ -3,7 +3,11 @@ export class FileLoader {
    * Validate if file is a WAV file
    */
   static isWavFile(file: File): boolean {
-    return file.type === 'audio/wav' || file.type === 'audio/wave' || file.name.toLowerCase().endsWith('.wav');
+    return (
+      file.type === 'audio/wav' ||
+      file.type === 'audio/wave' ||
+      file.name.toLowerCase().endsWith('.wav')
+    );
   }
 
   /**
@@ -11,29 +15,28 @@ export class FileLoader {
    */
   static filterWavFiles(files: FileList | File[]): File[] {
     const fileArray = Array.from(files);
-    return fileArray.filter(file => this.isWavFile(file));
+    return fileArray.filter((file) => this.isWavFile(file));
   }
 
   /**
    * Format file size for display
    */
   static formatFileSize(bytes: number): string {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) {
+      return '0 Bytes';
+    }
 
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+    return `${Math.round((bytes / Math.pow(k, i)) * 100) / 100} ${sizes[i]}`;
   }
 
   /**
    * Setup drag and drop handlers
    */
-  static setupDragAndDrop(
-    element: HTMLElement,
-    onFiles: (files: File[]) => void
-  ): void {
+  static setupDragAndDrop(element: HTMLElement, onFiles: (files: File[]) => void): void {
     element.addEventListener('dragover', (e) => {
       e.preventDefault();
       element.classList.add('drag-over');

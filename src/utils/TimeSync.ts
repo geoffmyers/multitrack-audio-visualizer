@@ -3,7 +3,9 @@ export class TimeSync {
    * Convert time (seconds) to pixel position on canvas
    */
   static timeToPixel(currentTime: number, duration: number, canvasWidth: number): number {
-    if (duration === 0) return 0;
+    if (duration === 0) {
+      return 0;
+    }
     return (currentTime / duration) * canvasWidth;
   }
 
@@ -11,7 +13,9 @@ export class TimeSync {
    * Convert pixel position to time (seconds)
    */
   static pixelToTime(pixel: number, canvasWidth: number, duration: number): number {
-    if (canvasWidth === 0) return 0;
+    if (canvasWidth === 0) {
+      return 0;
+    }
     return (pixel / canvasWidth) * duration;
   }
 
@@ -19,7 +23,9 @@ export class TimeSync {
    * Format time in MM:SS format
    */
   static formatTime(seconds: number): string {
-    if (!isFinite(seconds) || seconds < 0) return '00:00';
+    if (!isFinite(seconds) || seconds < 0) {
+      return '00:00';
+    }
 
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);

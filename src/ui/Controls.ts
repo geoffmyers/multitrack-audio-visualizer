@@ -1,4 +1,4 @@
-import { AudioEngine } from '../core/AudioEngine';
+import { type AudioEngine } from '../core/AudioEngine';
 import { TimeSync } from '../utils/TimeSync';
 
 export class Controls {

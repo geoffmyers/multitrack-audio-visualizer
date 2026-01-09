@@ -1,4 +1,4 @@
-import { AudioEngine } from '../core/AudioEngine';
+import { type AudioEngine } from '../core/AudioEngine';
 import { WaveformRenderer } from '../rendering/WaveformRenderer';
 import { RenderContext } from '../rendering/RenderContext';
 import { FrameCapture } from './FrameCapture';
@@ -60,7 +60,9 @@ export class VideoExporter {
           estimate = ` | ETA: ${mins}m ${secs}s`;
         }
 
-        console.log(`[Export] Progress: ${currentProgress.toFixed(2)}% | Elapsed: ${Math.floor(elapsed)}s${estimate}`);
+        console.log(
+          `[Export] Progress: ${currentProgress.toFixed(2)}% | Elapsed: ${Math.floor(elapsed)}s${estimate}`
+        );
         lastProgress = currentProgress;
       }
     };
@@ -70,10 +72,10 @@ export class VideoExporter {
       if (typeof SharedArrayBuffer === 'undefined') {
         throw new Error(
           'Video export requires SharedArrayBuffer support. ' +
-          'Please serve the application with these headers:\n' +
-          'Cross-Origin-Opener-Policy: same-origin\n' +
-          'Cross-Origin-Embedder-Policy: require-corp\n\n' +
-          'For production deployment, configure your web server to send these headers.'
+            'Please serve the application with these headers:\n' +
+            'Cross-Origin-Opener-Policy: same-origin\n' +
+            'Cross-Origin-Embedder-Policy: require-corp\n\n' +
+            'For production deployment, configure your web server to send these headers.'
         );
       }
 
@@ -87,11 +89,19 @@ export class VideoExporter {
 
       // Capture frames
       onProgress(5, 'Rendering frames...');
-      const frames = await this.captureFrames(options.fps, options.layout, options.amplitudeMode, options.heightPercent, options.smoothingLevel, options.windowDuration, (p) => {
-        const progress = 5 + p * 30;
-        onProgress(progress, 'Rendering frames...');
-        logProgress(progress);
-      });
+      const frames = await this.captureFrames(
+        options.fps,
+        options.layout,
+        options.amplitudeMode,
+        options.heightPercent,
+        options.smoothingLevel,
+        options.windowDuration,
+        (p) => {
+          const progress = 5 + p * 30;
+          onProgress(progress, 'Rendering frames...');
+          logProgress(progress);
+        }
+      );
       logProgress(35, true);
 
       // Mix audio
@@ -125,10 +135,7 @@ export class VideoExporter {
    */
   private async initWorker(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.worker = new Worker(
-        new URL('./export.worker.ts', import.meta.url),
-        { type: 'module' }
-      );
+      this.worker = new Worker(new URL('./export.worker.ts', import.meta.url), { type: 'module' });
 
       this.worker.onmessage = (e) => {
         if (e.data.type === 'ready') {
@@ -168,7 +175,16 @@ export class VideoExporter {
       const time = i / fps;
 
       // Render using EXPORT renderer (always 1920x1080)
-      this.exportRenderer.render(tracks, time, duration, layout, amplitudeMode, heightPercent, smoothingLevel, windowDuration);
+      this.exportRenderer.render(
+        tracks,
+        time,
+        duration,
+        layout,
+        amplitudeMode,
+        heightPercent,
+        smoothingLevel,
+        windowDuration
+      );
 
       // Capture frame from export canvas
       const dataURL = this.exportFrameCapture.captureFrameAsDataURL();
@@ -178,7 +194,7 @@ export class VideoExporter {
       if (i % 10 === 0) {
         onProgress(i / totalFrames);
         // Yield control back to the browser to prevent UI freezing
-        await new Promise(resolve => setTimeout(resolve, 0));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       }
     }
 
@@ -205,7 +221,7 @@ export class VideoExporter {
     );
 
     // Create sources and connect to destination
-    tracks.forEach(track => {
+    tracks.forEach((track) => {
       const source = offlineContext.createBufferSource();
       source.buffer = track.buffer;
       source.connect(offlineContext.destination);
@@ -259,7 +275,7 @@ export class VideoExporter {
     for (let i = 0; i < buffer.length; i++) {
       for (let channel = 0; channel < numberOfChannels; channel++) {
         const sample = Math.max(-1, Math.min(1, channels[channel][i]));
-        view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+        view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
         offset += 2;
       }
     }
@@ -313,8 +329,8 @@ export class VideoExporter {
           fps: options.fps,
           codec: options.codec,
           quality: options.quality,
-          audioBitrate: options.audioBitrate
-        }
+          audioBitrate: options.audioBitrate,
+        },
       });
     });
   }

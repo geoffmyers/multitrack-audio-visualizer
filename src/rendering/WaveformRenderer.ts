@@ -17,7 +17,16 @@ export class WaveformRenderer {
   /**
    * Render all tracks with the specified layout mode (1-second rolling window)
    */
-  render(tracks: AudioTrack[], currentTime: number, duration: number, layout: LayoutMode = 'overlay', amplitudeMode: AmplitudeMode = 'individual', heightPercent: number = 50, smoothingLevel: number = 0, windowDuration: number = 1.0): void {
+  render(
+    tracks: AudioTrack[],
+    currentTime: number,
+    duration: number,
+    layout: LayoutMode = 'overlay',
+    amplitudeMode: AmplitudeMode = 'individual',
+    heightPercent: number = 50,
+    smoothingLevel: number = 0,
+    windowDuration: number = 1.0
+  ): void {
     const dimensions = this.renderContext.getDimensions();
 
     // Clear canvas with black background
@@ -36,11 +45,28 @@ export class WaveformRenderer {
     }
 
     if (layout === 'stacked') {
-      this.renderTracksStacked(tracks, currentTime, amplitudeMode, globalMaxAmplitude, heightPercent, smoothingLevel, windowDuration);
+      this.renderTracksStacked(
+        tracks,
+        currentTime,
+        amplitudeMode,
+        globalMaxAmplitude,
+        heightPercent,
+        smoothingLevel,
+        windowDuration
+      );
     } else if (layout === 'overlay-additive') {
       const centerY = dimensions.centerY;
       const maxAmplitude = this.renderContext.heightPercentToPixels(heightPercent);
-      this.renderTracksAdditive(tracks, currentTime, centerY, maxAmplitude, amplitudeMode, globalMaxAmplitude, smoothingLevel, windowDuration);
+      this.renderTracksAdditive(
+        tracks,
+        currentTime,
+        centerY,
+        maxAmplitude,
+        amplitudeMode,
+        globalMaxAmplitude,
+        smoothingLevel,
+        windowDuration
+      );
     } else if (layout === 'spectrum-overlay') {
       this.renderTracksSpectrumOverlay(tracks, currentTime, heightPercent, windowDuration);
     } else if (layout === 'spectrum-stacked') {
@@ -49,8 +75,17 @@ export class WaveformRenderer {
       // Default overlay mode - center at canvas center
       const centerY = dimensions.centerY;
       const maxAmplitude = this.renderContext.heightPercentToPixels(heightPercent);
-      tracks.forEach(track => {
-        this.renderTrackRealtimeWithAmplitude(track, currentTime, centerY, maxAmplitude, amplitudeMode, globalMaxAmplitude, smoothingLevel, windowDuration);
+      tracks.forEach((track) => {
+        this.renderTrackRealtimeWithAmplitude(
+          track,
+          currentTime,
+          centerY,
+          maxAmplitude,
+          amplitudeMode,
+          globalMaxAmplitude,
+          smoothingLevel,
+          windowDuration
+        );
       });
     }
 
@@ -61,12 +96,20 @@ export class WaveformRenderer {
   /**
    * Calculate the global maximum amplitude across all tracks for normalization
    */
-  private calculateGlobalMaxAmplitude(tracks: AudioTrack[], currentTime: number, windowDuration: number): number {
+  private calculateGlobalMaxAmplitude(
+    tracks: AudioTrack[],
+    currentTime: number,
+    windowDuration: number
+  ): number {
     const dimensions = this.renderContext.getDimensions();
     let globalMax = 0;
 
-    tracks.forEach(track => {
-      const waveformData = track.getWaveformDataForTimeWindow(currentTime, windowDuration, dimensions.width);
+    tracks.forEach((track) => {
+      const waveformData = track.getWaveformDataForTimeWindow(
+        currentTime,
+        windowDuration,
+        dimensions.width
+      );
       for (let i = 0; i < waveformData.length; i++) {
         if (waveformData[i] > globalMax) {
           globalMax = waveformData[i];
@@ -77,15 +120,28 @@ export class WaveformRenderer {
     return globalMax > 0 ? globalMax : 1.0; // Avoid division by zero
   }
 
-
   /**
    * Render a single track's waveform in real-time with custom amplitude
    */
-  private renderTrackRealtimeWithAmplitude(track: AudioTrack, currentTime: number, centerY: number, maxAmplitude: number, amplitudeMode: AmplitudeMode = 'individual', globalMaxAmplitude: number = 1.0, smoothingLevel: number = 0, windowDuration: number = 1.0): void {
+  private renderTrackRealtimeWithAmplitude(
+    track: AudioTrack,
+    currentTime: number,
+    centerY: number,
+    maxAmplitude: number,
+    amplitudeMode: AmplitudeMode = 'individual',
+    globalMaxAmplitude: number = 1.0,
+    smoothingLevel: number = 0,
+    windowDuration: number = 1.0
+  ): void {
     const dimensions = this.renderContext.getDimensions();
 
     // Get waveform data for the last windowDuration seconds
-    const waveformData = track.getWaveformDataForTimeWindow(currentTime, windowDuration, dimensions.width, smoothingLevel);
+    const waveformData = track.getWaveformDataForTimeWindow(
+      currentTime,
+      windowDuration,
+      dimensions.width,
+      smoothingLevel
+    );
 
     // Set color and opacity
     const color = ColorManager.hexToRgba(track.color, track.opacity);
@@ -129,7 +185,15 @@ export class WaveformRenderer {
   /**
    * Render tracks in stacked layout (vertically distributed)
    */
-  private renderTracksStacked(tracks: AudioTrack[], currentTime: number, amplitudeMode: AmplitudeMode = 'individual', globalMaxAmplitude: number = 1.0, heightPercent: number = 50, smoothingLevel: number = 0, windowDuration: number = 1.0): void {
+  private renderTracksStacked(
+    tracks: AudioTrack[],
+    currentTime: number,
+    amplitudeMode: AmplitudeMode = 'individual',
+    globalMaxAmplitude: number = 1.0,
+    heightPercent: number = 50,
+    smoothingLevel: number = 0,
+    windowDuration: number = 1.0
+  ): void {
     const dimensions = this.renderContext.getDimensions();
     const numTracks = tracks.length;
     const trackHeight = dimensions.height / numTracks;
@@ -142,19 +206,42 @@ export class WaveformRenderer {
       // Waveforms extend ±(heightPercent/2) above and below center, allowing overlap
       const maxAmplitude = this.renderContext.heightPercentToPixels(heightPercent) / 2;
 
-      this.renderTrackRealtimeWithAmplitude(track, currentTime, centerY, maxAmplitude, amplitudeMode, globalMaxAmplitude, smoothingLevel, windowDuration);
+      this.renderTrackRealtimeWithAmplitude(
+        track,
+        currentTime,
+        centerY,
+        maxAmplitude,
+        amplitudeMode,
+        globalMaxAmplitude,
+        smoothingLevel,
+        windowDuration
+      );
     });
   }
 
   /**
    * Render tracks in additive overlay layout (stacked gradient effect)
    */
-  private renderTracksAdditive(tracks: AudioTrack[], currentTime: number, centerY: number, maxAmplitude: number, amplitudeMode: AmplitudeMode = 'individual', globalMaxAmplitude: number = 1.0, smoothingLevel: number = 0, windowDuration: number = 1.0): void {
+  private renderTracksAdditive(
+    tracks: AudioTrack[],
+    currentTime: number,
+    centerY: number,
+    maxAmplitude: number,
+    amplitudeMode: AmplitudeMode = 'individual',
+    globalMaxAmplitude: number = 1.0,
+    smoothingLevel: number = 0,
+    windowDuration: number = 1.0
+  ): void {
     const dimensions = this.renderContext.getDimensions();
 
     // Pre-fetch waveform data for all tracks
-    const waveformDataArray = tracks.map(track =>
-      track.getWaveformDataForTimeWindow(currentTime, windowDuration, dimensions.width, smoothingLevel)
+    const waveformDataArray = tracks.map((track) =>
+      track.getWaveformDataForTimeWindow(
+        currentTime,
+        windowDuration,
+        dimensions.width,
+        smoothingLevel
+      )
     );
 
     // Calculate maxX for progressive reveal
@@ -183,7 +270,7 @@ export class WaveformRenderer {
       }
 
       // Calculate total amplitude
-      let totalAmplitude = amplitudes.reduce((sum, a) => sum + a, 0);
+      const totalAmplitude = amplitudes.reduce((sum, a) => sum + a, 0);
 
       // Clamp and scale if necessary
       let scaleFactor = 1.0;
@@ -197,7 +284,8 @@ export class WaveformRenderer {
         const scaledAmplitude = amplitudes[i] * scaleFactor;
         const segmentHeight = scaledAmplitude * maxAmplitude;
 
-        if (segmentHeight > 0.5) { // Skip tiny segments for performance
+        if (segmentHeight > 0.5) {
+          // Skip tiny segments for performance
           const color = ColorManager.hexToRgba(tracks[i].color, tracks[i].opacity);
           this.ctx.strokeStyle = color;
           this.ctx.lineWidth = 1;
@@ -220,7 +308,8 @@ export class WaveformRenderer {
         const scaledAmplitude = amplitudes[i] * scaleFactor;
         const segmentHeight = scaledAmplitude * maxAmplitude;
 
-        if (segmentHeight > 0.5) { // Skip tiny segments for performance
+        if (segmentHeight > 0.5) {
+          // Skip tiny segments for performance
           const color = ColorManager.hexToRgba(tracks[i].color, tracks[i].opacity);
           this.ctx.strokeStyle = color;
           this.ctx.lineWidth = 1;
@@ -242,12 +331,17 @@ export class WaveformRenderer {
   /**
    * Render tracks in spectrum overlay layout
    */
-  private renderTracksSpectrumOverlay(tracks: AudioTrack[], currentTime: number, heightPercent: number = 50, windowDuration: number = 1.0): void {
+  private renderTracksSpectrumOverlay(
+    tracks: AudioTrack[],
+    currentTime: number,
+    heightPercent: number = 50,
+    windowDuration: number = 1.0
+  ): void {
     const dimensions = this.renderContext.getDimensions();
     // Spectrum bars grow upward from the bottom of the canvas
     const baseY = dimensions.height;
 
-    tracks.forEach(track => {
+    tracks.forEach((track) => {
       this.renderTrackSpectrum(track, currentTime, baseY, heightPercent, windowDuration);
     });
   }
@@ -255,7 +349,12 @@ export class WaveformRenderer {
   /**
    * Render tracks in spectrum stacked layout
    */
-  private renderTracksSpectrumStacked(tracks: AudioTrack[], currentTime: number, heightPercent: number = 50, windowDuration: number = 1.0): void {
+  private renderTracksSpectrumStacked(
+    tracks: AudioTrack[],
+    currentTime: number,
+    heightPercent: number = 50,
+    windowDuration: number = 1.0
+  ): void {
     const dimensions = this.renderContext.getDimensions();
     const numTracks = tracks.length;
     const trackHeight = dimensions.height / numTracks;
@@ -270,7 +369,13 @@ export class WaveformRenderer {
   /**
    * Render a single track's frequency spectrum
    */
-  private renderTrackSpectrum(track: AudioTrack, currentTime: number, baseY: number, heightPercent: number = 50, windowDuration: number = 1.0): void {
+  private renderTrackSpectrum(
+    track: AudioTrack,
+    currentTime: number,
+    baseY: number,
+    heightPercent: number = 50,
+    windowDuration: number = 1.0
+  ): void {
     const dimensions = this.renderContext.getDimensions();
     const spectrumData = track.getFrequencySpectrumForTimeWindow(currentTime, windowDuration, 2048);
     const numBins = spectrumData.length;

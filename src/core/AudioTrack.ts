@@ -47,7 +47,9 @@ export class AudioTrack {
       let max = 0;
       for (let j = start; j < end; j++) {
         const abs = Math.abs(channelData[j]);
-        if (abs > max) max = abs;
+        if (abs > max) {
+          max = abs;
+        }
       }
 
       waveform[i] = max;
@@ -111,7 +113,9 @@ export class AudioTrack {
       for (let j = start; j < end; j++) {
         if (j >= 0 && j < channelData.length) {
           const abs = Math.abs(channelData[j]);
-          if (abs > max) max = abs;
+          if (abs > max) {
+            max = abs;
+          }
         }
       }
 
@@ -207,7 +211,7 @@ export class AudioTrack {
 
     // Apply window function (Hann window)
     for (let i = 0; i < fftSize; i++) {
-      const windowValue = 0.5 * (1 - Math.cos(2 * Math.PI * i / (fftSize - 1)));
+      const windowValue = 0.5 * (1 - Math.cos((2 * Math.PI * i) / (fftSize - 1)));
       audioWindow[i] *= windowValue;
     }
 
@@ -251,7 +255,7 @@ export class AudioTrack {
     const output = new Float32Array(N * 2); // real and imaginary parts
 
     for (let k = 0; k < N / 2; k++) {
-      const angle = -2 * Math.PI * k / N;
+      const angle = (-2 * Math.PI * k) / N;
       const cos = Math.cos(angle);
       const sin = Math.sin(angle);
 
@@ -292,7 +296,7 @@ export class AudioTrack {
       sampleRate: this.sampleRate,
       numberOfChannels: this.numberOfChannels,
       color: this.color,
-      opacity: this.opacity
+      opacity: this.opacity,
     };
   }
 }

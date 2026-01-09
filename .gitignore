@@ -48,3 +48,6 @@ lerna-debug.log*
 *.mp4
 *.ogg
 *.wav
+
+# Test coverage
+coverage/
