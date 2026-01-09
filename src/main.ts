@@ -43,7 +43,9 @@ class MultitrackAudioVisualizer {
     this.heightSlider = document.getElementById('height-slider') as HTMLInputElement;
     this.smoothingSlider = document.getElementById('smoothing-slider') as HTMLInputElement;
     this.fpsSlider = document.getElementById('fps-slider') as HTMLInputElement;
-    this.windowDurationSlider = document.getElementById('window-duration-slider') as HTMLInputElement;
+    this.windowDurationSlider = document.getElementById(
+      'window-duration-slider'
+    ) as HTMLInputElement;
 
     // Initialize components
     this.audioEngine = new AudioEngine();
@@ -59,12 +61,23 @@ class MultitrackAudioVisualizer {
 
     // Initialize UI
     this.controls = new Controls(this.audioEngine);
-    this.trackControls = new TrackControls(this.audioEngine, () => this.render());
-    this.exportUI = new ExportUI(this.audioEngine, () => this.currentLayout, () => this.currentAmplitudeMode, () => this.currentHeightPercent, () => this.currentSmoothingLevel, () => this.currentWindowDuration);
+    this.trackControls = new TrackControls(this.audioEngine, () => {
+      this.render();
+    });
+    this.exportUI = new ExportUI(
+      this.audioEngine,
+      () => this.currentLayout,
+      () => this.currentAmplitudeMode,
+      () => this.currentHeightPercent,
+      () => this.currentSmoothingLevel,
+      () => this.currentWindowDuration
+    );
     this.presetUI = new PresetUI(
       this.presetManager,
       () => this.getCurrentSettings(),
-      (settings) => this.applySettings(settings)
+      (settings) => {
+        this.applySettings(settings);
+      }
     );
 
     // Setup selectors
@@ -76,7 +89,9 @@ class MultitrackAudioVisualizer {
     this.setupWindowDurationSlider();
 
     // Setup window resize handler
-    window.addEventListener('resize', () => this.handleResize());
+    window.addEventListener('resize', () => {
+      this.handleResize();
+    });
 
     // Setup render loop (must be initialized before loading presets)
     this.renderLoop = new RenderLoop();
@@ -198,7 +213,16 @@ class MultitrackAudioVisualizer {
     const state = this.audioEngine.getPlaybackState();
     const tracks = this.audioEngine.getTracks();
 
-    this.renderer.render(tracks, state.currentTime, state.duration, this.currentLayout, this.currentAmplitudeMode, this.currentHeightPercent, this.currentSmoothingLevel, this.currentWindowDuration);
+    this.renderer.render(
+      tracks,
+      state.currentTime,
+      state.duration,
+      this.currentLayout,
+      this.currentAmplitudeMode,
+      this.currentHeightPercent,
+      this.currentSmoothingLevel,
+      this.currentWindowDuration
+    );
   }
 
   /**
@@ -239,7 +263,8 @@ class MultitrackAudioVisualizer {
     document.getElementById('height-value')!.textContent = `${settings.heightPercent}%`;
     document.getElementById('smoothing-value')!.textContent = settings.smoothingLevel.toString();
     document.getElementById('fps-value')!.textContent = settings.fpsCap.toString();
-    document.getElementById('window-duration-value')!.textContent = `${settings.windowDuration.toFixed(2)}s`;
+    document.getElementById('window-duration-value')!.textContent =
+      `${settings.windowDuration.toFixed(2)}s`;
 
     // Apply FPS cap
     this.renderLoop.setTargetFPS(settings.fpsCap);

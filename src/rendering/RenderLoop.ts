@@ -13,7 +13,9 @@ export class RenderLoop {
    * Start the render loop
    */
   start(callback: (deltaTime: number) => void): void {
-    if (this.isRunning) return;
+    if (this.isRunning) {
+      return;
+    }
 
     this.isRunning = true;
     this.callback = callback;
@@ -61,7 +63,9 @@ export class RenderLoop {
    * Main render loop
    */
   private loop = (): void => {
-    if (!this.isRunning) return;
+    if (!this.isRunning) {
+      return;
+    }
 
     const now = performance.now();
     const deltaTime = now - this.lastFrameTime;

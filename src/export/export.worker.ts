@@ -22,7 +22,7 @@ self.onmessage = async (e) => {
           fps: data.fps,
           codec: data.codec,
           quality: data.quality,
-          audioBitrate: data.audioBitrate
+          audioBitrate: data.audioBitrate,
         });
         await exportVideo(data);
         console.log('[Worker] Export completed');
@@ -38,13 +38,15 @@ self.onmessage = async (e) => {
     console.error('[Worker] Error stack:', errorStack);
     self.postMessage({
       type: 'error',
-      error: errorMessage
+      error: errorMessage,
     });
   }
 };
 
 async function initFFmpeg(): Promise<void> {
-  if (ffmpeg) return;
+  if (ffmpeg) {
+    return;
+  }
 
   ffmpeg = new FFmpeg();
 
@@ -70,7 +72,7 @@ async function initFFmpeg(): Promise<void> {
   ffmpeg.on('progress', ({ progress }) => {
     self.postMessage({
       type: 'progress',
-      progress: progress * 100
+      progress: progress * 100,
     });
   });
 
@@ -96,7 +98,10 @@ async function exportVideo(data: {
   console.log('[Worker] Export parameters:', {
     framesCount: frames.length,
     audioDataSize: audioData.byteLength,
-    fps, codec, quality, audioBitrate
+    fps,
+    codec,
+    quality,
+    audioBitrate,
   });
 
   self.postMessage({ type: 'status', message: 'Writing frames...' });
@@ -105,7 +110,7 @@ async function exportVideo(data: {
   // Write frames to virtual filesystem
   for (let i = 0; i < frames.length; i++) {
     const frameData = frames[i].split(',')[1]; // Remove data URL prefix
-    const blob = await fetch(`data:image/png;base64,${frameData}`).then(r => r.blob());
+    const blob = await fetch(`data:image/png;base64,${frameData}`).then((r) => r.blob());
     const fileName = `frame${i.toString().padStart(5, '0')}.png`;
     await ffmpeg.writeFile(fileName, await fetchFile(blob));
 
@@ -113,7 +118,7 @@ async function exportVideo(data: {
       console.log(`[Worker] Wrote frame ${i + 1}/${frames.length}`);
       self.postMessage({
         type: 'progress',
-        progress: (i / frames.length) * 30 // First 30% is writing frames
+        progress: (i / frames.length) * 30, // First 30% is writing frames
       });
     }
   }
@@ -133,18 +138,28 @@ async function exportVideo(data: {
   const crf = quality.toString();
 
   const ffmpegArgs = [
-    '-framerate', fps.toString(),
-    '-i', 'frame%05d.png',
-    '-i', 'audio.wav',
-    '-c:v', videoCodec,
-    '-preset', 'medium',
-    '-crf', crf,
-    '-vf', 'scale=1920:1080',
-    '-c:a', 'aac',
-    '-b:a', audioBitrate,
-    '-pix_fmt', 'yuv420p',
+    '-framerate',
+    fps.toString(),
+    '-i',
+    'frame%05d.png',
+    '-i',
+    'audio.wav',
+    '-c:v',
+    videoCodec,
+    '-preset',
+    'medium',
+    '-crf',
+    crf,
+    '-vf',
+    'scale=1920:1080',
+    '-c:a',
+    'aac',
+    '-b:a',
+    audioBitrate,
+    '-pix_fmt',
+    'yuv420p',
     '-shortest',
-    'output.mp4'
+    'output.mp4',
   ];
 
   console.log('[Worker] Running FFmpeg with args:', ffmpegArgs.join(' '));
@@ -188,10 +203,13 @@ async function exportVideo(data: {
       ? buffer.byteLength
       : buffer.length;
   console.log('[Worker] Sending complete message with data size:', bufferSize);
-  self.postMessage({
-    type: 'complete',
-    data: outputData
-  }, { transfer: buffer instanceof ArrayBuffer ? [buffer] : [] } as any);
+  self.postMessage(
+    {
+      type: 'complete',
+      data: outputData,
+    },
+    { transfer: buffer instanceof ArrayBuffer ? [buffer] : [] } as any
+  );
   console.log('[Worker] Complete message sent');
 }
 

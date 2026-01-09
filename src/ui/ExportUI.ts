@@ -1,4 +1,4 @@
-import { AudioEngine } from '../core/AudioEngine';
+import { type AudioEngine } from '../core/AudioEngine';
 import { VideoExporter } from '../export/VideoExporter';
 import type { ExportOptions } from '../types/audio.types';
 import type { LayoutMode, AmplitudeMode } from '../types/visualizer.types';
@@ -60,7 +60,9 @@ export class ExportUI {
   }
 
   private async startExport(): Promise<void> {
-    if (this.isExporting) return;
+    if (this.isExporting) {
+      return;
+    }
 
     // Pause playback if playing
     const wasPlaying = this.audioEngine.getPlaybackState().isPlaying;
@@ -82,7 +84,7 @@ export class ExportUI {
       amplitudeMode: this.getCurrentAmplitudeMode(),
       heightPercent: this.getCurrentHeightPercent(),
       smoothingLevel: this.getCurrentSmoothingLevel(),
-      windowDuration: this.getCurrentWindowDuration()
+      windowDuration: this.getCurrentWindowDuration(),
     };
 
     try {

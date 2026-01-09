@@ -9,7 +9,7 @@ export class ColorManager {
     '#BB8FCE', // Purple
     '#F8B195', // Peach
     '#85E085', // Light Green
-    '#FF99CC'  // Pink
+    '#FF99CC', // Pink
   ];
 
   /**
@@ -31,7 +31,9 @@ export class ColorManager {
    */
   static hexToRgba(hex: string, alpha: number = 1): string {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    if (!result) return `rgba(255, 255, 255, ${alpha})`;
+    if (!result) {
+      return `rgba(255, 255, 255, ${alpha})`;
+    }
 
     const r = parseInt(result[1], 16);
     const g = parseInt(result[2], 16);

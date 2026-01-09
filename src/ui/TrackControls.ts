@@ -1,4 +1,4 @@
-import { AudioEngine } from '../core/AudioEngine';
+import { type AudioEngine } from '../core/AudioEngine';
 import { ColorManager } from '../visualization/ColorManager';
 import { FileLoader } from '../utils/FileLoader';
 import type { AudioTrack } from '../core/AudioTrack';
@@ -86,7 +86,8 @@ export class TrackControls {
     const tracks = this.audioEngine.getTracks();
 
     if (tracks.length === 0) {
-      this.trackListEl.innerHTML = '<p style="color: #666; font-size: 13px; text-align: center;">No tracks loaded</p>';
+      this.trackListEl.innerHTML =
+        '<p style="color: #666; font-size: 13px; text-align: center;">No tracks loaded</p>';
       return;
     }
 
@@ -122,7 +123,7 @@ export class TrackControls {
     `;
 
     // Remove button
-    const removeBtn = div.querySelector('.track-remove') as HTMLButtonElement;
+    const removeBtn = div.querySelector('.track-remove')!;
     removeBtn.addEventListener('click', () => {
       this.audioEngine.removeTrack(track.id);
       this.onTrackUpdate();

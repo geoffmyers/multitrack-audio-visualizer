@@ -7,7 +7,17 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "export": "tsx cli/index.ts"
+    "export": "tsx cli/index.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "quality": "npm run typecheck && npm run lint && npm run test",
+    "prepare": "husky"
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.10",
@@ -15,13 +25,34 @@
     "canvas": "^3.2.0",
     "lil-gui": "^0.19.0"
   },
+  "lint-staged": {
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,html,css}": [
+      "prettier --write"
+    ]
+  },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/eslint__js": "^8.42.3",
     "@types/node": "^20.10.0",
+    "@vitest/coverage-v8": "^4.0.16",
     "cli-progress": "^3.12.0",
     "commander": "^11.1.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "happy-dom": "^20.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
     "tsx": "^4.7.0",
     "typescript": "^5.3.0",
+    "typescript-eslint": "^8.52.0",
     "vite": "^5.0.0",
+    "vitest": "^4.0.16",
     "wav-decoder": "^1.3.0"
   }
 }
