@@ -1,3 +1,11 @@
+---
+title: Multi-Track Audio Visualizer
+created: 2026-01-28
+modified: 2026-01-28
+description: A real-time audio/music visualizer that displays multi-track waveforms with customizable colors and can export high-quality MP4/H.265 videos.
+tags: [music, readme]
+---
+
 # Multi-Track Audio Visualizer
 
 A real-time audio/music visualizer that displays multi-track waveforms with customizable colors and can export high-quality MP4/H.265 videos.

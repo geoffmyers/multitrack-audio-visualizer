@@ -1,3 +1,11 @@
+---
+title: CLAUDE.md - Multitrack Audio Visualizer
+created: 2026-01-28
+modified: 2026-02-06
+description: Multi-Track Audio Visualizer - A real-time music visualization tool that displays overlaid waveforms from multiple WAV files and exports to MP4/H.265 video. The visualizer uses a 1-second rolling...
+tags: [music, claude]
+---
+
 # CLAUDE.md - Multitrack Audio Visualizer
 
 ## Project Overview

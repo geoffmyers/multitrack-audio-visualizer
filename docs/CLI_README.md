@@ -1,3 +1,11 @@
+---
+title: CLI Video Export - Multi-Track Audio Visualizer
+created: 2026-01-28
+modified: 2026-01-28
+description: Command-line tool for rendering multi-track audio visualization videos directly in the terminal.
+tags: [music]
+---
+
 # CLI Video Export - Multi-Track Audio Visualizer
 
 Command-line tool for rendering multi-track audio visualization videos directly in the terminal.

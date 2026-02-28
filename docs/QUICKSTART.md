@@ -1,3 +1,11 @@
+---
+title: Quick Start Guide
+created: 2026-01-28
+modified: 2026-01-28
+description: "``bash npm run dev ``"
+tags: [music]
+---
+
 # Quick Start Guide
 
 ## Getting Started in 3 Steps

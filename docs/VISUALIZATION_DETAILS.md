@@ -1,3 +1,11 @@
+---
+title: Visualization Technical Details
+created: 2026-01-28
+modified: 2026-01-28
+description: "The visualizer now displays a 1-second rolling window of audio waveforms that updates at 60 frames per second, creating a dynamic oscilloscope-style visualization."
+tags: [music]
+---
+
 # Visualization Technical Details
 
 ## Real-Time Rolling Waveform Display
