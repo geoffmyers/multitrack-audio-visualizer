@@ -1,3 +1,11 @@
+---
+title: GNU GENERAL PUBLIC LICENSE
+created: 2026-01-28
+modified: 2026-01-28
+description: "Version 2, June 1991"
+tags: [music]
+---
+
 # GNU GENERAL PUBLIC LICENSE
 
 Version 2, June 1991
