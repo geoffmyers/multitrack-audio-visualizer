@@ -278,3 +278,4 @@ To change the 1-second window duration:
 - **FFmpeg.wasm requires SharedArrayBuffer** - deployment must include COOP/COEP headers
 - **Web Audio timing is based on AudioContext.currentTime** - monotonically increasing, unaffected by pause/seek
 - **Waveform extraction is real-time** - no pre-computation or caching, computed every frame for rolling window effect
+- This is a git subtree; push changes upstream with `git subtree push --prefix=music/multitrack-audio-visualizer multitrack-audio-visualizer main`
