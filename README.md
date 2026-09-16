@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/icon.svg" width="96" height="96" alt="Multi-Track Audio Visualizer icon">
+</p>
+
 # Multi-Track Audio Visualizer
 
 <!-- BADGES:START -->
@@ -262,6 +266,8 @@ linting and tests together. See [ARCHITECTURE.md](ARCHITECTURE.md) and
   [cli-progress](https://github.com/npkg/cli-progress) for the interface.
 - Tests by [Vitest](https://vitest.dev/) with
   [happy-dom](https://github.com/capricorn86/happy-dom).
+- The README icon is the [Font Awesome](https://fontawesome.com/) `wave-square` glyph,
+  used under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 Written by Geoff Myers.
 
