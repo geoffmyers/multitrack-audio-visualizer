@@ -1,4 +1,4 @@
-# Contributing to Multitrack Audio Visualizer
+# Contributing to Multi-Track Audio Visualizer
 
 Thanks for taking an interest. This project is developed inside a private
 mono repo and published here as a snapshot, which shapes a couple of the

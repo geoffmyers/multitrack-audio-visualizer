@@ -270,10 +270,11 @@ To change the 1-second window duration:
 - **FFmpeg.wasm requires SharedArrayBuffer** - deployment must include COOP/COEP headers
 - **Web Audio timing is based on AudioContext.currentTime** - monotonically increasing, unaffected by pause/seek
 - **Waveform extraction is real-time** - no pre-computation or caching, computed every frame for rolling window effect
-- This is a git subtree. Push upstream with the mandated wrapper:
-  `scripts/safe-subtree-push.sh --prefix=music/multitrack-audio-visualizer --remote=multitrack-audio-visualizer`
-- **NEVER run `git subtree push` or `git subtree split` directly.** A raw split has
-  twice pushed the entire mono-repo history — and the secrets in it — to a public
-  remote (see `docs/security/2026-02-04-` and `2026-05-12-credential-leak-audit.md`).
-  The wrapper splits to a temp branch, caps the commit count and forces inspection;
-  a pre-push hook refuses the raw command.
+- This project is published to GitHub (`geoffmyers/multitrack-audio-visualizer`) as a snapshot.
+  Each publish appends one commit to the public history. Publish with:
+  `scripts/publish-subtree-snapshot.sh --prefix=music/multitrack-audio-visualizer --publish`
+  Exclusions and GitHub metadata are declared in `scripts/subtree-publish.json`.
+- **NEVER run `git subtree push` or `git subtree split`.** A raw split has twice
+  pushed the entire mono-repo history — and the secrets in it — to a public remote
+  (see `docs/security/2026-02-04-` and `2026-05-12-credential-leak-audit.md`). A
+  pre-push hook refuses it.
