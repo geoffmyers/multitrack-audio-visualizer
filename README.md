@@ -262,6 +262,18 @@ Output will be in `dist/` directory.
 npm run preview
 ```
 
+## Prerequisites
+
+- **Node.js 20+** and npm
+- A modern browser with Web Audio support for playback
+- Video export runs `ffmpeg` in WebAssembly — no system ffmpeg needed
+
+## Contributing
+
+Bug reports and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md)
+for setup, checks and how this repository is published, and
+[ARCHITECTURE.md](ARCHITECTURE.md) for how the project fits together.
+
 ## License
 
 GNU General Public License v2.0 or later (GPL-2.0-or-later). See [LICENSE.md](LICENSE.md) for details.
