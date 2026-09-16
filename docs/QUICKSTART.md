@@ -73,6 +73,6 @@ The app will open at `http://localhost:3000`
 
 ## Next Steps
 
-- See [README.md](README.md) for complete documentation
+- See [README.md](../README.md) for complete documentation
 - Check `src/` folder for code implementation
 - Customize colors in `src/visualization/ColorManager.ts`

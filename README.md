@@ -6,7 +6,6 @@
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
 <!-- BADGES:END -->
 
-
 A real-time audio/music visualizer that displays multi-track waveforms with customizable colors and can export high-quality MP4/H.265 videos.
 
 ## Visual Examples
@@ -278,8 +277,7 @@ npm run preview
 ## Contributing
 
 Bug reports and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md)
-for setup, checks and how this repository is published, and
-[ARCHITECTURE.md](ARCHITECTURE.md) for how the project fits together.
+for setup, checks and how this repository is published.
 
 ## License
 

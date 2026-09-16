@@ -81,7 +81,7 @@ For each frame, the system:
 
 #### AudioTrack.getWaveformDataForTimeWindow()
 
-**Location**: [src/core/AudioTrack.ts:67-109](src/core/AudioTrack.ts)
+**Location**: [src/core/AudioTrack.ts:67-109](../src/core/AudioTrack.ts)
 
 ```typescript
 getWaveformDataForTimeWindow(
@@ -107,7 +107,7 @@ getWaveformDataForTimeWindow(
 
 #### WaveformRenderer.renderTrackRealtime()
 
-**Location**: [src/rendering/WaveformRenderer.ts:73-99](src/rendering/WaveformRenderer.ts)
+**Location**: [src/rendering/WaveformRenderer.ts:73-99](../src/rendering/WaveformRenderer.ts)
 
 ```typescript
 renderTrackRealtime(track: AudioTrack, currentTime: number): void
@@ -234,7 +234,7 @@ The visualization can be customized by modifying:
 
 #### Window Duration
 
-Change `1.0` to another value in [WaveformRenderer.ts:78](src/rendering/WaveformRenderer.ts):
+Change `1.0` to another value in [WaveformRenderer.ts:78](../src/rendering/WaveformRenderer.ts):
 
 ```typescript
 // Show last 2 seconds instead of 1
@@ -243,7 +243,7 @@ const waveformData = track.getWaveformDataForTimeWindow(currentTime, 2.0, this.w
 
 #### Line Thickness
 
-Change in [WaveformRenderer.ts:84](src/rendering/WaveformRenderer.ts):
+Change in [WaveformRenderer.ts:84](../src/rendering/WaveformRenderer.ts):
 
 ```typescript
 this.ctx.lineWidth = 2; // Change to 1 for thinner, 3 for thicker
@@ -251,7 +251,7 @@ this.ctx.lineWidth = 2; // Change to 1 for thinner, 3 for thicker
 
 #### Amplitude Scale
 
-Change in [WaveformRenderer.ts:75](src/rendering/WaveformRenderer.ts):
+Change in [WaveformRenderer.ts:75](../src/rendering/WaveformRenderer.ts):
 
 ```typescript
 const maxAmplitude = this.height * 0.4; // Use 80% of height
