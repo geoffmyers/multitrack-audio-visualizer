@@ -1,6 +1,7 @@
 import { type AudioEngine } from '../core/AudioEngine';
 import { ColorManager } from '../visualization/ColorManager';
 import { FileLoader } from '../utils/FileLoader';
+import { fetchDemoTracks, downloadDemoTracks } from '../utils/DemoTracks';
 import type { AudioTrack } from '../core/AudioTrack';
 
 export class TrackControls {
@@ -23,6 +24,34 @@ export class TrackControls {
     this.loadingOverlay = document.getElementById('loading-overlay')!;
 
     this.setupEventListeners();
+    void this.setupDemoTracks();
+  }
+
+  /** Show "Load demo tracks" when the deployment ships demo/tracks.json. */
+  private async setupDemoTracks(): Promise<void> {
+    const button = document.getElementById('load-demo-btn') as HTMLButtonElement | null;
+    if (!button) {
+      return;
+    }
+    const tracks = await fetchDemoTracks(document.baseURI);
+    if (tracks.length === 0) {
+      return;
+    }
+    button.hidden = false;
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      this.showLoading();
+      try {
+        const files = await downloadDemoTracks(tracks);
+        await this.loadFiles(files);
+      } catch (error) {
+        console.error('Error loading demo tracks:', error);
+        alert('The demo tracks could not be downloaded.');
+      } finally {
+        this.hideLoading();
+        button.disabled = false;
+      }
+    });
   }
 
   private setupEventListeners(): void {

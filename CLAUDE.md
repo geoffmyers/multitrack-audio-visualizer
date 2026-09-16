@@ -112,6 +112,7 @@ npm run preview
 #### Utilities ([src/utils/](src/utils/))
 
 - **FileLoader.ts**: Drag-and-drop and file picker handling
+- **DemoTracks.ts**: Optional `demo/tracks.json` → "Load demo tracks" button (hidden when absent)
 - **TimeSync.ts**: Time formatting utilities (MM:SS)
 
 ## Key Implementation Details

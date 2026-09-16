@@ -133,6 +133,14 @@
         background: #555;
       }
 
+      [hidden] {
+        display: none !important;
+      }
+
+      #load-demo-btn {
+        margin-top: 8px;
+      }
+
       button.secondary:hover {
         background: #666;
       }
@@ -450,6 +458,7 @@
           <p>Drop WAV files here</p>
           <input type="file" id="file-input" accept=".wav" multiple style="display: none">
           <button id="add-track-btn">Add Track(s)</button>
+          <button id="load-demo-btn" class="secondary" hidden>Load demo tracks</button>
         </div>
         <div id="track-list"></div>
         <h2 style="margin-top: 30px;">Export</h2>

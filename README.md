@@ -42,6 +42,11 @@ video with all the tracks mixed into the soundtrack.
 The visualiser runs in the browser. A command-line exporter shares the same
 rendering code and uses your system's ffmpeg, for batch jobs and faster renders.
 
+**Try it at
+[multitrack-audio-visualizer.geoffmyers.com](https://multitrack-audio-visualizer.geoffmyers.com)**:
+load your own stems, or press **Load demo tracks** for a short synthesised
+piece. Your files stay in your browser.
+
 ## Screenshots
 
 ### Output examples
@@ -123,6 +128,15 @@ npm run preview      # serves dist/ locally
 
 Click **Add Track(s)**, or drag WAV files onto the drop zone. Several files can
 be added at once, and each gets its own colour.
+
+A deployment can offer a **Load demo tracks** button by serving
+`demo/tracks.json` next to `index.html`, listing WAV files in the same folder:
+
+```json
+{ "tracks": [{ "file": "drums.wav", "name": "Drums" }, { "file": "bass.wav", "name": "Bass" }] }
+```
+
+Without that file the button stays hidden.
 
 ### Playback
 
