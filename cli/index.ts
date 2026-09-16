@@ -21,7 +21,9 @@ program
   .option('-c, --config <path>', 'Path to JSON config file')
   .option('-a, --audio <files>', 'Comma-separated list of audio file paths')
   .option('-p, --preset <name>', 'Preset name to use')
-  .option('-o, --output <path>', 'Output video path', 'output.mp4')
+  // No defaults on --output and --verbose: a default always looks "given", and
+  // used to overwrite the config file's own values.
+  .option('-o, --output <path>', 'Output video path (default: the config file\'s "output", else output.mp4)')
   .option('--layout <mode>', 'Layout mode: overlay, overlay-additive, stacked, spectrum-overlay, spectrum-stacked')
   .option('--amplitude-mode <mode>', 'Amplitude mode: individual, normalized')
   .option('--height <percent>', 'Height percentage (1-100)', parseFloat)
@@ -32,7 +34,7 @@ program
   .option('--quality <crf>', 'Quality CRF value (18-28, lower is better)', parseInt)
   .option('--audio-bitrate <bitrate>', 'Audio bitrate (e.g., 192k)')
   .option('--max-frames <number>', 'Limit total frames (for testing)', parseInt)
-  .option('-v, --verbose', 'Enable verbose logging', false)
+  .option('-v, --verbose', 'Enable verbose logging')
   .action(async (options) => {
     const logger = new Logger(options.verbose);
 
@@ -75,9 +77,9 @@ program
         // Build config from CLI arguments
         config = {
           audioFiles: options.audio.split(',').map((f: string) => f.trim()),
-          output: options.output,
+          output: options.output ?? 'output.mp4',
           preset: options.preset,
-          verbose: options.verbose,
+          verbose: options.verbose ?? false,
           overrides: {},
           export: {}
         };

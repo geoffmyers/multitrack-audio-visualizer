@@ -187,7 +187,7 @@ npm run export -- export --config my-export.json --output song.mp4
 | `-c, --config <path>` | Read settings from a JSON file |
 | `-a, --audio <files>` | Comma-separated WAV files |
 | `-p, --preset <name>` | Start from a preset |
-| `-o, --output <path>` | Output file (default `output.mp4`) |
+| `-o, --output <path>` | Output file (default: the config file's `output`, else `output.mp4`) |
 | `--layout <mode>` | `overlay`, `overlay-additive`, `stacked`, `spectrum-overlay` or `spectrum-stacked` |
 | `--amplitude-mode <mode>` | `individual` or `normalized` |
 | `--height <percent>`, `--smoothing <0-5>`, `--window-duration <seconds>` | Visual overrides |
@@ -195,9 +195,8 @@ npm run export -- export --config my-export.json --output song.mp4
 | `--max-frames <n>` | Stop after n frames, for a quick test |
 | `-v, --verbose` | Detailed logging |
 
-**Known issue:** when you use a config file, its `output` and `verbose` values
-are replaced by the command-line defaults, so pass `--output` (and `--verbose`)
-on the command line.
+Options given on the command line override the same settings in a config file;
+anything you leave out keeps the config file's value.
 
 [docs/CLI_README.md](docs/CLI_README.md) documents the config file format and
 hardware-accelerated encoding in full.
@@ -272,8 +271,6 @@ Bug reports and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md
 for setup, checks and how this repository is published.
 
 ## License
-
-Copyright © 2026 Geoff Myers
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software

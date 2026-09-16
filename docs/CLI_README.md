@@ -143,7 +143,7 @@ npm run export -- export [options]
 - `-c, --config <path>` - Path to JSON config file
 - `-a, --audio <files>` - Comma-separated list of audio files
 - `-p, --preset <name>` - Preset name to use
-- `-o, --output <path>` - Output video path (default: output.mp4)
+- `-o, --output <path>` - Output video path (default: the config file's `output`, else output.mp4)
 - `--layout <mode>` - Layout mode
 - `--amplitude-mode <mode>` - Amplitude mode
 - `--height <percent>` - Height percentage (1-100)
