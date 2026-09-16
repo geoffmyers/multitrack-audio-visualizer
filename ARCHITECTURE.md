@@ -15,5 +15,7 @@ A TypeScript browser app with a headless CLI that shares its core.
 
 - The browser and CLI share `src/core` by adapting it rather than forking it —
   the CLI adapters exist so the engine never has to know which it is running in.
-- Video export runs **ffmpeg compiled to WebAssembly**, so there is no system
-  ffmpeg dependency, at the cost of memory and speed on long renders.
+- In the browser, video export runs **ffmpeg compiled to WebAssembly**, so there
+  is no system dependency, at the cost of memory and speed on long renders. The
+  CLI draws on **node-canvas** and encodes with the **system ffmpeg**, which it
+  checks for before starting.

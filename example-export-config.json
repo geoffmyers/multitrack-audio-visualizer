@@ -1,0 +1,21 @@
+{
+  "audioFiles": [
+    "path/to/track1.wav",
+    "path/to/track2.wav",
+    "path/to/track3.wav"
+  ],
+  "preset": "Waveform Overlay 1",
+  "output": "output.mp4",
+  "overrides": {
+    "heightPercent": 75,
+    "smoothingLevel": 2,
+    "windowDuration": 1.0
+  },
+  "export": {
+    "fps": 60,
+    "codec": "h264",
+    "quality": 23,
+    "audioBitrate": "192k"
+  },
+  "verbose": false
+}

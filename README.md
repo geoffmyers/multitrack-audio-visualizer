@@ -6,289 +6,268 @@
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
 <!-- BADGES:END -->
 
-A real-time audio/music visualizer that displays multi-track waveforms with customizable colors and can export high-quality MP4/H.265 videos.
+## Description
 
-## Visual Examples
+Load the stems of a song, one WAV file per instrument, and this app draws them
+together in real time: overlaid or stacked waveforms, or frequency spectra,
+each track in its own colour. When it looks right, export it as a 1920×1080
+video with all the tracks mixed into the soundtrack.
 
-### Overlay Mode
+The visualiser runs in the browser. A command-line exporter shares the same
+rendering code and uses your system's ffmpeg, for batch jobs and faster renders.
 
-Overlaid waveforms with transparency blending, centered on canvas.
+## Table of Contents
 
-![Overlay Visualization](images/waveform-overlay-example-01.png)
+- [Description](#description)
+- [Screenshots](#screenshots)
+  - [Output examples](#output-examples)
+  - [Interface](#interface)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Loading tracks](#loading-tracks)
+  - [Playback](#playback)
+  - [Styling the tracks](#styling-the-tracks)
+  - [Presets](#presets)
+  - [Exporting from the browser](#exporting-from-the-browser)
+  - [Exporting from the command line](#exporting-from-the-command-line)
+- [Troubleshooting](#troubleshooting)
+- [Architecture](#architecture)
+- [Credits](#credits)
+- [Contributing](#contributing)
+- [License](#license)
 
-### Overlay Additive Mode
+## Screenshots
 
-Overlaid waveforms with additive blending for vibrant, bright colors.
+### Output examples
 
-![Overlay Additive Visualization](images/waveform-additive-example-01.png)
+| Waveform overlay | Waveform additive |
+|---|---|
+| ![Overlaid waveforms with transparency blending](images/waveform-overlay-example-01.png) | ![Overlaid waveforms with additive blending](images/waveform-additive-example-01.png) |
+| **Waveform stacked** | **Spectrum overlay** |
+| ![Waveforms stacked, one band per track](images/waveform-stacked-example-01.png) | ![Overlaid FFT frequency spectra](images/spectrum-overlay-example-01.png) |
+| **Spectrum stacked** | |
+| ![FFT frequency spectra stacked, one band per track](images/spectrum-stacked-example-01.png) | |
 
-### Stacked Mode
+### Interface
 
-Vertically stacked waveforms, each in its own track space.
-
-![Stacked Visualization](images/waveform-stacked-example-01.png)
-
-### Spectrum Overlay Mode
-
-FFT frequency spectrum analysis, overlaid and centered.
-
-![Spectrum Overlay Visualization](images/spectrum-overlay-example-01.png)
-
-### Spectrum Stacked Mode
-
-FFT frequency spectrum analysis, vertically stacked.
-
-![Spectrum Stacked Visualization](images/spectrum-stacked-example-01.png)
-
-## User Interface
-
-### Waveform Overlay Interface
-
-Multi-track overlay mode with preset controls and individual track customization.
-
-![Waveform Overlay UI](images/screenshot-waveform-overlay-1.png)
-
-### Waveform Stacked Interface
-
-Vertically stacked waveforms showing individual track separation.
-
-![Waveform Stacked UI](images/screenshot-waveform-stacked-1.png)
-
-### Waveform Additive Interface
-
-Additive blending mode with vibrant, overlapping colors.
-
-![Waveform Additive UI](images/screenshot-waveform-additive-9.png)
-
-### Spectrum Overlay Interface
-
-FFT frequency spectrum visualization with preset management.
-
-![Spectrum Overlay UI](images/screenshot-spectrum-overlay-1.png)
+| Waveform overlay | Waveform stacked |
+|---|---|
+| ![The app with overlaid waveforms, preset controls and per-track settings](images/screenshot-waveform-overlay-1.png) | ![The app with stacked waveforms](images/screenshot-waveform-stacked-1.png) |
+| **Waveform additive** | **Spectrum overlay** |
+| ![The app in additive blending mode](images/screenshot-waveform-additive-9.png) | ![The app showing frequency spectra with the preset manager](images/screenshot-spectrum-overlay-1.png) |
 
 ## Features
 
-- **Multi-Track Support**: Load multiple WAV files simultaneously
-- **Real-Time Oscilloscope Display**: 60fps rolling 1-second waveform window (updated every frame)
-- **Customizable Colors**: Individual color and opacity control per track
-- **Overlaid Display**: All tracks displayed on same canvas with transparency
-- **Interactive Controls**: Play, pause, seek, and timeline scrubbing
-- **Video Export**: Export to MP4/H.265 with composite audio (browser or CLI)
-- **CLI Export Tool**: Command-line video rendering for batch processing and automation
-- **Drag & Drop**: Easy file loading via drag and drop
-- **1920x1080 Resolution**: Full HD 16:9 aspect ratio
-- **20 Built-in Presets**: Pre-configured visualization styles
+- **Any number of tracks**, loaded together and played in sync
+- **Five layouts**: waveform overlay, waveform additive, waveform stacked,
+  spectrum overlay and spectrum stacked
+- **A scrolling oscilloscope view**: each frame shows the audio just before the
+  playhead, redrawn 60 times a second
+- **Per-track colour and opacity**, and a choice of normalising each track on
+  its own or all tracks together
+- **Controls for height, smoothing and window length**
+- **20 built-in presets**, plus your own: save, rename, delete, import and export
+  them as JSON
+- **Video export in the browser** to 1920×1080, 60 fps MP4 (H.265) with the
+  tracks mixed to AAC audio, using ffmpeg compiled to WebAssembly
+- **A command-line exporter** for batch work, with H.264 or H.265, adjustable
+  quality and frame rate, and config files
+- **Drag and drop** loading, and the space bar for play and pause
+
+## Requirements
+
+**Browser app**
+
+- **Node.js 20.19+** (or 22.12+), which Vite 7 needs, and npm
+- A current Chrome, Edge, Firefox or Safari with the Web Audio API
+- For in-browser export: a page served with the cross-origin isolation headers
+  that `SharedArrayBuffer` needs (see
+  [Exporting from the browser](#exporting-from-the-browser))
+
+**Command-line exporter**
+
+- **ffmpeg** on your `PATH`, for example `brew install ffmpeg` or
+  `sudo apt install ffmpeg`
+- The build tools for [node-canvas](https://github.com/Automattic/node-canvas),
+  only on platforms where npm cannot download a prebuilt binary
+
+Input files must be **WAV**.
 
 ## Installation
 
-1. Install dependencies:
-
 ```bash
+git clone https://github.com/geoffmyers/multitrack-audio-visualizer.git
+cd multitrack-audio-visualizer
 npm install
-```
-
-2. Start the development server:
-
-```bash
 npm run dev
 ```
 
-3. Open your browser to `http://localhost:3000`
+Open [http://localhost:3000](http://localhost:3000).
+
+To build a static copy for hosting:
+
+```bash
+npm run build        # type-checks, then writes dist/
+npm run preview      # serves dist/ locally
+```
 
 ## Usage
 
-### Adding Tracks
+### Loading tracks
 
-1. Click "Add Track(s)" button or drag WAV files onto the drop zone
-2. Multiple files can be added at once
-3. Each track is assigned a unique color automatically
+Click **Add Track(s)**, or drag WAV files onto the drop zone. Several files can
+be added at once, and each gets its own colour.
 
-### Playback Controls
+### Playback
 
-- **Play/Pause**: Click the play button or press `Spacebar`
-- **Seek**: Drag the timeline slider to any position
-- **Timeline**: Shows current time / total duration
+- **Play / Pause** with the button or the **space bar**
+- **Seek** by dragging the timeline
+- The time display shows the current position and the total length
 
-### Track Customization
+The view is a rolling window: it shows the audio leading up to the playhead,
+and a white line marks the playhead itself.
 
-Each track has individual controls:
+### Styling the tracks
 
-- **Color**: Click the color picker to change the track color
-- **Opacity**: Adjust transparency with the opacity slider
-- **Remove**: Click the × button to remove a track
+Each track has a **colour** picker, an **opacity** slider and a **×** to remove
+it. The layout menu switches between the five layouts, and the amplitude menu
+chooses between **Individual** (each track scaled to its own peak) and
+**Normalized** (all tracks scaled to the loudest).
 
-### Video Export
+### Presets
 
-#### Browser Export
+Pick a preset from the menu to apply a complete look. **Save** stores the
+current settings as a new preset, and **Rename**, **Delete**, **Import**,
+**Export** and **Export All** manage them. Your presets are kept in the
+browser's local storage; the 20 built-in ones are in
+`presets/all-presets.json`.
 
-1. Load and configure your tracks
-2. Click "Export Video (MP4/H.265)"
-3. Wait for the export process (progress shown)
-4. Video will automatically download when complete
+### Exporting from the browser
 
-Export settings:
+1. Load and style your tracks.
+2. Click **Export Video (MP4/H.265)** and wait for the progress bar.
+3. The video downloads when it is done: 1920×1080, 60 fps, H.265, with AAC
+   audio at 192 kbit/s.
 
-- Format: MP4 (H.265/HEVC codec)
-- Resolution: 1920x1080
-- Frame Rate: 60fps
-- Audio: AAC 192kbps (mixed from all tracks)
+In-browser export needs `SharedArrayBuffer`, which browsers only provide on a
+page served with these headers:
 
-#### Command-Line Export
+```
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
+```
 
-For batch processing and automation, use the CLI tool:
+The development server in `vite.config.ts` already sends them. Configure the
+same headers on any server that hosts `dist/`.
+
+### Exporting from the command line
+
+The CLI renders with the same code and encodes with your system's ffmpeg, which
+is much faster than the browser.
 
 ```bash
-# List available presets
+# The built-in presets and their settings
 npm run export -- list-presets
+npm run export -- show-preset "Waveform Overlay 1"
 
-# Export with config file
-npm run export -- export --config example-export-config.json
-
-# Export with command-line arguments
+# Export from arguments
 npm run export -- export \
-  --audio "track1.wav,track2.wav" \
+  --audio "drums.wav,bass.wav,keys.wav" \
   --preset "Waveform Overlay 1" \
-  --output video.mp4
+  --output song.mp4
+
+# Export from a config file (copy example-export-config.json and edit the paths)
+npm run export -- export --config my-export.json --output song.mp4
 ```
 
-**See [docs/CLI_README.md](docs/CLI_README.md) for complete CLI documentation.**
+| Option | What it does |
+|---|---|
+| `-c, --config <path>` | Read settings from a JSON file |
+| `-a, --audio <files>` | Comma-separated WAV files |
+| `-p, --preset <name>` | Start from a preset |
+| `-o, --output <path>` | Output file (default `output.mp4`) |
+| `--layout <mode>` | `overlay`, `overlay-additive`, `stacked`, `spectrum-overlay` or `spectrum-stacked` |
+| `--amplitude-mode <mode>` | `individual` or `normalized` |
+| `--height <percent>`, `--smoothing <0-5>`, `--window-duration <seconds>` | Visual overrides |
+| `--fps <n>`, `--codec <h264\|h265>`, `--quality <crf>`, `--audio-bitrate <rate>` | Encoding overrides |
+| `--max-frames <n>` | Stop after n frames, for a quick test |
+| `-v, --verbose` | Detailed logging |
 
-## Browser Compatibility
+**Known issue:** when you use a config file, its `output` and `verbose` values
+are replaced by the command-line defaults, so pass `--output` (and `--verbose`)
+on the command line.
 
-### Required Features
-
-- Web Audio API
-- HTML5 Canvas
-- SharedArrayBuffer (for FFmpeg.wasm)
-
-### Supported Browsers
-
-- Chrome 90+
-- Firefox 90+
-- Safari 14+
-- Edge 90+
-
-### IMPORTANT: CORS Headers
-
-This application requires special HTTP headers for video export:
-
-- `Cross-Origin-Opener-Policy: same-origin`
-- `Cross-Origin-Embedder-Policy: require-corp`
-
-These are configured in `vite.config.ts` for the development server.
-
-## Technical Details
-
-### Architecture
-
-- **TypeScript**: Type-safe development
-- **Vite**: Fast build tooling and dev server
-- **Web Audio API**: Native audio processing and playback
-- **HTML5 Canvas**: 2D rendering at 1920x1080
-- **FFmpeg.wasm**: Client-side video encoding
-- **Web Workers**: Non-blocking video export
-
-### Project Structure
-
-```
-src/
-├── core/           # Audio engine and track management
-├── rendering/      # Canvas rendering and animation loop
-├── visualization/  # Waveform analysis and color management
-├── export/         # Video export functionality
-├── ui/             # User interface controls
-├── utils/          # Helper utilities
-└── types/          # TypeScript type definitions
-```
-
-### Visualization Behavior
-
-The visualizer displays a **1-second rolling window** of audio waveforms, similar to an oscilloscope:
-
-- **Window Duration**: 1000ms (1 second) of audio samples
-- **Update Rate**: 60 times per second (60 Hz / 60 FPS)
-- **Display**: Shows the most recent 1 second of audio leading up to the current playback position
-- **Time Indicator**: White vertical line at the right edge marks the current playback position
-- **Real-time**: Waveform data is extracted and rendered every frame for smooth, live visualization
-
-This creates a dynamic, scrolling visualization where you see the audio waveform "rolling" across the screen from left to right as the music plays.
-
-### Performance
-
-- Load time: < 3s per 3-minute track
-- Rendering: Consistent 60fps with 8+ tracks
-- Real-time waveform extraction: < 1ms per track per frame
-- Export speed: 1-2x realtime
-- Memory: < 500MB for 4 tracks × 3 minutes
-
-## Keyboard Shortcuts
-
-- `Spacebar`: Play/Pause
+[docs/CLI_README.md](docs/CLI_README.md) documents the config file format and
+hardware-accelerated encoding in full.
 
 ## Troubleshooting
 
-### Audio won't play
+**Audio will not play.** Click the page first, since browsers only start audio
+after a user action, and check that the files are valid WAV.
 
-- Ensure files are valid WAV format
-- Check browser console for errors
-- Try clicking on the page first (browsers require user interaction)
+**Export fails.** Check that the page is served with the two headers above and
+that your browser supports `SharedArrayBuffer`. Try a shorter file, and look for
+ffmpeg errors in the browser console. For long or large exports, use the CLI.
 
-### Video export fails
+**Playback stutters.** Use fewer tracks at once and close other tabs.
 
-- Ensure browser supports SharedArrayBuffer
-- Check that COOP/COEP headers are set
-- Try with shorter audio duration first
-- Check browser console for FFmpeg errors
+**A file will not load.** Only WAV is supported, and very large files take a
+while to decode.
 
-### Performance issues
+## Architecture
 
-- Reduce number of simultaneous tracks
-- Lower opacity for better blending performance
-- Close other browser tabs
+```
+WAV files ──► AudioEngine (Web Audio API) ──► AudioTrack per file
+                    │                              │
+                    │ synchronised playback        │ waveform / FFT for the current window
+                    ▼                              ▼
+               RenderLoop (60 fps) ─────────► WaveformRenderer ──► <canvas> 1920×1080
+                                                   │
+                           VideoExporter ◄─────────┘  frame by frame
+                                 │
+                                 └──► export.worker.ts (ffmpeg.wasm) ──► MP4
 
-### Files won't load
-
-- Only WAV files are supported
-- Ensure files aren't corrupted
-- Check file size (very large files may take time)
-
-## Development
-
-### Build for Production
-
-```bash
-npm run build
+cli/ ──► CLIAudioEngine / CLIAudioTrack (no DOM) ──► same renderer on node-canvas ──► system ffmpeg
 ```
 
-Output will be in `dist/` directory.
+| Path | Role |
+|---|---|
+| `src/core/` | `AudioEngine` (loading, synchronised playback, seeking), `AudioTrack` (per-window waveform and spectrum), `PresetManager` |
+| `src/rendering/` | `WaveformRenderer` for all five layouts, and the 60 fps `RenderLoop` |
+| `src/export/` | `VideoExporter`, `FrameCapture` and the ffmpeg.wasm Web Worker |
+| `src/ui/` | Playback, per-track, preset and export controls |
+| `src/visualization/`, `src/utils/` | Colours, file loading and time formatting |
+| `cli/` | The command-line exporter and its DOM-free adapters |
+| `presets/`, `public/presets/` | The built-in presets |
+| `public/ffmpeg/` | The ffmpeg WebAssembly core |
+| `docs/` | CLI guide, quick start and visualisation details |
 
-### Preview Production Build
+`npm test` runs the Vitest suite, and `npm run quality` runs type-checking,
+linting and tests together. See [ARCHITECTURE.md](ARCHITECTURE.md) and
+[docs/VISUALIZATION_DETAILS.md](docs/VISUALIZATION_DETAILS.md) for more detail.
 
-```bash
-npm run preview
-```
+## Credits
 
-## Prerequisites
+- Built with [TypeScript](https://www.typescriptlang.org/) and
+  [Vite](https://vite.dev/), on the browser's Web Audio and Canvas APIs.
+- In-browser encoding by [ffmpeg.wasm](https://ffmpegwasm.netlify.app/);
+  command-line encoding by [FFmpeg](https://ffmpeg.org/), with rendering by
+  [node-canvas](https://github.com/Automattic/node-canvas), WAV decoding by
+  [wav-decoder](https://github.com/mohayonao/wav-decoder), and
+  [Commander](https://github.com/tj/commander.js) and
+  [cli-progress](https://github.com/npkg/cli-progress) for the interface.
+- Tests by [Vitest](https://vitest.dev/) with
+  [happy-dom](https://github.com/capricorn86/happy-dom).
 
-- **Node.js 20+** and npm
-- A modern browser with Web Audio support for playback
-- Video export runs `ffmpeg` in WebAssembly — no system ffmpeg needed
+Written by Geoff Myers.
 
 ## Contributing
 
-Bug reports and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md)
+Bug reports and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md)
 for setup, checks and how this repository is published.
 
 ## License
 
-GNU General Public License v2.0 or later (GPL-2.0-or-later). See [LICENSE.md](LICENSE.md) for details.
-
-## Credits
-
-Built with:
-
-- [Vite](https://vitejs.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [FFmpeg.wasm](https://ffmpegwasm.netlify.app/)
-- Web Audio API
-- HTML5 Canvas API
+GPL-2.0-or-later. See [LICENSE.md](LICENSE.md).
