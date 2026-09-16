@@ -47,13 +47,15 @@ privately through GitHub's *Report a vulnerability* button on the Security tab.
 
 ## How this repo is published
 
-This project lives in a private mono repo and is published here as a
-**one-commit snapshot**, so the history you see starts at the import rather
-than at the first day of the project. Two consequences:
+This project lives in a private mono repo. Each publish adds **one commit** on
+top of the history here, so the history grows with every release, but one
+commit here can stand for many upstream changes. Two consequences:
 
-- Pull requests are reviewed here and applied upstream, then republished. Your
-  authorship is preserved in the commit message; your commit SHA will not
-  survive, because the next snapshot replaces this history.
+- Pull requests are reviewed here and applied upstream, then arrive back in the
+  next published commit, which credits your authorship in its message. The pull
+  request is closed with a link to that commit rather than merged, because the
+  next publish is built from the upstream tree and would undo a change made
+  only here.
 - Operator configuration (`*.tpl` and similar) is deliberately excluded from
   the snapshot. If a config file looks missing, look for the matching
   `.example` file instead.

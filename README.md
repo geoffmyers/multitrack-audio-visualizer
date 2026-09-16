@@ -6,16 +6,6 @@
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
 <!-- BADGES:END -->
 
-## Description
-
-Load the stems of a song, one WAV file per instrument, and this app draws them
-together in real time: overlaid or stacked waveforms, or frequency spectra,
-each track in its own colour. When it looks right, export it as a 1920×1080
-video with all the tracks mixed into the soundtrack.
-
-The visualiser runs in the browser. A command-line exporter shares the same
-rendering code and uses your system's ffmpeg, for batch jobs and faster renders.
-
 ## Table of Contents
 
 - [Description](#description)
@@ -37,6 +27,16 @@ rendering code and uses your system's ffmpeg, for batch jobs and faster renders.
 - [Credits](#credits)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Description
+
+Load the stems of a song, one WAV file per instrument, and this app draws them
+together in real time: overlaid or stacked waveforms, or frequency spectra,
+each track in its own colour. When it looks right, export it as a 1920×1080
+video with all the tracks mixed into the soundtrack.
+
+The visualiser runs in the browser. A command-line exporter shares the same
+rendering code and uses your system's ffmpeg, for batch jobs and faster renders.
 
 ## Screenshots
 
