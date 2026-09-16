@@ -1,8 +1,3 @@
----
-title: Architecture
-description: How the visualizer renders multitrack audio in the browser and exports video.
----
-
 # Architecture
 
 A TypeScript browser app with a headless CLI that shares its core.
