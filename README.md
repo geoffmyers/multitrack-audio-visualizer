@@ -1,5 +1,12 @@
 # Multi-Track Audio Visualizer
 
+<!-- BADGES:START -->
+![TypeScript 5.3.0](https://img.shields.io/badge/TypeScript-5.3.0-3178c6?style=flat-square&logo=typescript)
+[![Licence GPL--2.0](https://img.shields.io/badge/licence-GPL--2.0-blue?style=flat-square)](LICENSE.md)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
+<!-- BADGES:END -->
+
+
 A real-time audio/music visualizer that displays multi-track waveforms with customizable colors and can export high-quality MP4/H.265 videos.
 
 ## Visual Examples
