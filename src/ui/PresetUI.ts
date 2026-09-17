@@ -1,4 +1,5 @@
 import type { PresetManager } from '../core/PresetManager';
+import { debugLog } from '../utils/debug';
 import type { PresetSettings } from '../types/preset.types';
 
 /**
@@ -49,7 +50,7 @@ export class PresetUI {
       this.updateButtonStates();
     });
 
-    console.log('[PresetUI] Initialized');
+    debugLog('[PresetUI] Initialized');
   }
 
   /**
@@ -174,7 +175,7 @@ export class PresetUI {
     try {
       const settings = this.presetManager.loadPreset(presetId);
       this.applySettings(settings);
-      console.log('[PresetUI] Loaded preset:', presetId);
+      debugLog('[PresetUI] Loaded preset:', presetId);
     } catch (error) {
       alert(`Failed to load preset: ${error instanceof Error ? error.message : 'Unknown error'}`);
       this.presetSelect.value = '';

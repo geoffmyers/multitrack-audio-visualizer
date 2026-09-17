@@ -22,7 +22,7 @@ function createMockAudioBuffer(options: {
     getChannelData: vi.fn().mockReturnValue(channelData),
     copyFromChannel: vi.fn(),
     copyToChannel: vi.fn(),
-  } as unknown as AudioBuffer;
+  };
 }
 
 describe('AudioTrack', () => {
@@ -51,6 +51,28 @@ describe('AudioTrack', () => {
       const track = new AudioTrack('track-1', 'Test Track', mockBuffer, '#FF0000');
 
       expect(track.opacity).toBe(0.7);
+    });
+
+    it('should default volume to 1.0 (unity gain), independent of opacity', () => {
+      // Regression test: volume used to be conflated with opacity (a visual
+      // setting) in the CLI's mixdown. A quiet-looking track (low opacity)
+      // must not default to a quiet-sounding one.
+      const track = new AudioTrack('track-1', 'Test Track', mockBuffer, '#FF0000', 0.1);
+
+      expect(track.opacity).toBe(0.1);
+      expect(track.volume).toBe(1.0);
+    });
+
+    it('should accept an explicit volume, separate from opacity', () => {
+      const track = new AudioTrack('track-1', 'Test Track', mockBuffer, '#FF0000', 0.1, 0.6);
+
+      expect(track.opacity).toBe(0.1);
+      expect(track.volume).toBe(0.6);
+    });
+
+    it('should clamp an out-of-range constructor volume', () => {
+      expect(new AudioTrack('t', 'T', mockBuffer, '#FF0000', 0.7, -1).volume).toBe(0);
+      expect(new AudioTrack('t', 'T', mockBuffer, '#FF0000', 0.7, 2).volume).toBe(1);
     });
 
     it('should initialize waveformData, gainNode, and sourceNode as null', () => {
@@ -151,6 +173,14 @@ describe('AudioTrack', () => {
 
       track.setVolume(1.5);
       expect(mockGainNode.gain.value).toBe(1);
+    });
+
+    it('should update track.volume even with no gainNode (e.g. the CLI path)', () => {
+      const track = new AudioTrack('track-1', 'Test Track', mockBuffer, '#FF0000');
+
+      track.setVolume(0.3);
+
+      expect(track.volume).toBe(0.3);
     });
   });
 
@@ -297,25 +327,6 @@ describe('AudioTrack', () => {
     });
   });
 
-  describe('computeWaveformData (deprecated)', () => {
-    it('should compute and store waveform data', () => {
-      const channelData = new Float32Array(44100);
-      channelData.fill(0.5);
-      const buffer = createMockAudioBuffer({
-        duration: 1,
-        sampleRate: 44100,
-        channelData,
-      });
-      const track = new AudioTrack('track-1', 'Test Track', buffer, '#FF0000');
-
-      expect(track.waveformData).toBeNull();
-
-      track.computeWaveformData(100);
-
-      expect(track.waveformData).not.toBeNull();
-      expect(track.waveformData!.length).toBe(100);
-    });
-  });
 });
 
 // Helper function

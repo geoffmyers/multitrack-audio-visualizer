@@ -1,4 +1,5 @@
 import { AudioEngine } from './core/AudioEngine';
+import { debugLog } from './utils/debug';
 import { WaveformRenderer } from './rendering/WaveformRenderer';
 import { RenderContext } from './rendering/RenderContext';
 import { RenderLoop } from './rendering/RenderLoop';
@@ -102,8 +103,8 @@ class MultitrackAudioVisualizer {
     // Start render loop
     this.startRenderLoop();
 
-    console.log('Multi-Track Audio Visualizer initialized');
-    console.log('Add WAV files to begin visualizing');
+    debugLog('Multi-Track Audio Visualizer initialized');
+    debugLog('Add WAV files to begin visualizing');
   }
 
   private initializeCanvas(): void {
@@ -272,7 +273,7 @@ class MultitrackAudioVisualizer {
     // Re-render with new settings
     this.render();
 
-    console.log('[MultitrackAudioVisualizer] Applied preset settings');
+    debugLog('[MultitrackAudioVisualizer] Applied preset settings');
   }
 
   /**
@@ -281,7 +282,7 @@ class MultitrackAudioVisualizer {
   private loadActivePreset(): void {
     const activePreset = this.presetManager.getActivePreset();
     if (activePreset) {
-      console.log('[MultitrackAudioVisualizer] Loading active preset:', activePreset.name);
+      debugLog('[MultitrackAudioVisualizer] Loading active preset:', activePreset.name);
       this.applySettings(activePreset.settings);
     }
   }

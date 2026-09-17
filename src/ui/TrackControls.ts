@@ -129,37 +129,73 @@ export class TrackControls {
   }
 
   private createTrackElement(track: AudioTrack, index: number): HTMLElement {
+    // `track.name` comes straight from the dropped file's name, so it must
+    // never be interpolated into an HTML string (innerHTML) -- a file named
+    // e.g. `<img src=x onerror=...>.wav` would otherwise run script in the
+    // app's origin. Everything below is built with DOM APIs (createElement /
+    // textContent / setAttribute), which never parse their input as markup.
     const div = document.createElement('div');
     div.className = 'track-item';
     div.style.borderLeftColor = track.color;
 
-    div.innerHTML = `
-      <div class="track-header">
-        <div class="track-name" title="${track.name}">${track.name}</div>
-        <button class="track-remove" data-track-id="${track.id}">×</button>
-      </div>
-      <div class="track-controls">
-        <div class="track-control">
-          <label>Color</label>
-          <input type="color" value="${track.color}" data-track-id="${track.id}" data-control="color">
-        </div>
-        <div class="track-control">
-          <label>Opacity: ${Math.round(track.opacity * 100)}%</label>
-          <input type="range" min="0" max="100" value="${track.opacity * 100}"
-                 data-track-id="${track.id}" data-control="opacity">
-        </div>
-      </div>
-    `;
+    const header = document.createElement('div');
+    header.className = 'track-header';
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'track-name';
+    nameEl.title = track.name;
+    nameEl.textContent = track.name;
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'track-remove';
+    removeBtn.dataset.trackId = track.id;
+    removeBtn.textContent = '×';
+
+    header.appendChild(nameEl);
+    header.appendChild(removeBtn);
+
+    const controls = document.createElement('div');
+    controls.className = 'track-controls';
+
+    const colorControl = document.createElement('div');
+    colorControl.className = 'track-control';
+    const colorLabel = document.createElement('label');
+    colorLabel.textContent = 'Color';
+    const colorInput = document.createElement('input');
+    colorInput.type = 'color';
+    colorInput.value = track.color;
+    colorInput.dataset.trackId = track.id;
+    colorInput.dataset.control = 'color';
+    colorControl.appendChild(colorLabel);
+    colorControl.appendChild(colorInput);
+
+    const opacityControl = document.createElement('div');
+    opacityControl.className = 'track-control';
+    const opacityLabel = document.createElement('label');
+    opacityLabel.textContent = `Opacity: ${Math.round(track.opacity * 100)}%`;
+    const opacityInput = document.createElement('input');
+    opacityInput.type = 'range';
+    opacityInput.min = '0';
+    opacityInput.max = '100';
+    opacityInput.value = String(track.opacity * 100);
+    opacityInput.dataset.trackId = track.id;
+    opacityInput.dataset.control = 'opacity';
+    opacityControl.appendChild(opacityLabel);
+    opacityControl.appendChild(opacityInput);
+
+    controls.appendChild(colorControl);
+    controls.appendChild(opacityControl);
+
+    div.appendChild(header);
+    div.appendChild(controls);
 
     // Remove button
-    const removeBtn = div.querySelector('.track-remove')!;
     removeBtn.addEventListener('click', () => {
       this.audioEngine.removeTrack(track.id);
       this.onTrackUpdate();
     });
 
     // Color input
-    const colorInput = div.querySelector('[data-control="color"]') as HTMLInputElement;
     colorInput.addEventListener('input', () => {
       track.setColor(colorInput.value);
       div.style.borderLeftColor = colorInput.value;
@@ -167,12 +203,10 @@ export class TrackControls {
     });
 
     // Opacity slider
-    const opacityInput = div.querySelector('[data-control="opacity"]') as HTMLInputElement;
     opacityInput.addEventListener('input', () => {
       const opacity = parseFloat(opacityInput.value) / 100;
       track.setOpacity(opacity);
-      const label = opacityInput.previousElementSibling as HTMLElement;
-      label.textContent = `Opacity: ${Math.round(opacity * 100)}%`;
+      opacityLabel.textContent = `Opacity: ${Math.round(opacity * 100)}%`;
       this.onTrackUpdate();
     });
 

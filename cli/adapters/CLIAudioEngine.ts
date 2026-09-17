@@ -3,6 +3,7 @@ import * as path from 'path';
 import { decode } from 'wav-decoder';
 import { CLIAudioTrack, type CLIAudioBuffer } from './CLIAudioTrack.js';
 import { Logger } from '../utils/Logger.js';
+import { normalizeStereoPeak, floatSampleToInt16 } from '../../src/audio/mixdown.js';
 
 export class CLIAudioEngine {
   private tracks: CLIAudioTrack[] = [];
@@ -18,7 +19,8 @@ export class CLIAudioEngine {
   async loadTrack(
     filePath: string,
     color: string,
-    opacity: number = 0.7
+    opacity: number = 0.7,
+    volume: number = 1.0
   ): Promise<CLIAudioTrack> {
     const startTime = Date.now();
 
@@ -47,7 +49,7 @@ export class CLIAudioEngine {
       // Create track
       const trackId = `track_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
       const trackName = path.basename(filePath);
-      const track = new CLIAudioTrack(trackId, trackName, cliBuffer, color, opacity);
+      const track = new CLIAudioTrack(trackId, trackName, cliBuffer, color, opacity, volume);
 
       this.tracks.push(track);
 
@@ -71,12 +73,12 @@ export class CLIAudioEngine {
    * Load multiple tracks
    */
   async loadTracks(
-    files: Array<{ path: string; color: string; opacity: number }>
+    files: Array<{ path: string; color: string; opacity: number; volume?: number }>
   ): Promise<CLIAudioTrack[]> {
     const tracks: CLIAudioTrack[] = [];
 
     for (const file of files) {
-      const track = await this.loadTrack(file.path, file.color, file.opacity);
+      const track = await this.loadTrack(file.path, file.color, file.opacity, file.volume ?? 1.0);
       tracks.push(track);
     }
 
@@ -126,30 +128,27 @@ export class CLIAudioEngine {
       const channel0 = track.buffer.getChannelData(0);
       const channel1 = numChannels > 1 ? track.buffer.getChannelData(1) : channel0;
 
-      // Add to mix (with opacity/volume control)
-      const gain = track.opacity;
+      // Add to mix at the track's audio volume. This must NOT be `opacity`:
+      // opacity is a visual (waveform colour) setting, and the browser never
+      // lets it affect playback or export -- using it here made the CLI's
+      // audio depend on a purely visual control, silently attenuating any
+      // track whose opacity was turned down for the picture.
+      const gain = track.volume;
       for (let i = 0; i < trackSamples && i < numSamples; i++) {
         left[i] += channel0[i] * gain;
         right[i] += channel1[i] * gain;
       }
     }
 
-    // Normalize to prevent clipping
-    let maxAmplitude = 0;
-    for (let i = 0; i < numSamples; i++) {
-      maxAmplitude = Math.max(maxAmplitude, Math.abs(left[i]), Math.abs(right[i]));
+    // Normalize to prevent clipping -- shared with the browser export path
+    // (VideoExporter.ts) so the two no longer disagree about how an
+    // over-full-scale mix is brought back down.
+    const { normalized, peak, wasNormalized } = normalizeStereoPeak({ left, right });
+    if (wasNormalized) {
+      this.logger.verbose(`Normalized audio mix (peak: ${peak.toFixed(2)})`);
     }
 
-    if (maxAmplitude > 1.0) {
-      const normalizeGain = 1.0 / maxAmplitude;
-      for (let i = 0; i < numSamples; i++) {
-        left[i] *= normalizeGain;
-        right[i] *= normalizeGain;
-      }
-      this.logger.verbose(`Normalized audio mix (peak: ${maxAmplitude.toFixed(2)})`);
-    }
-
-    return { left, right, sampleRate };
+    return { left: normalized.left, right: normalized.right, sampleRate };
   }
 
   /**
@@ -188,12 +187,8 @@ export class CLIAudioEngine {
 
     // Write interleaved PCM data (convert float32 to int16)
     for (let i = 0; i < numSamples; i++) {
-      // Clamp and convert to 16-bit signed integer
-      const leftSample = Math.max(-1, Math.min(1, mixed.left[i])) * 32767;
-      const rightSample = Math.max(-1, Math.min(1, mixed.right[i])) * 32767;
-
-      buffer.writeInt16LE(Math.round(leftSample), offset); offset += 2;
-      buffer.writeInt16LE(Math.round(rightSample), offset); offset += 2;
+      buffer.writeInt16LE(floatSampleToInt16(mixed.left[i]), offset); offset += 2;
+      buffer.writeInt16LE(floatSampleToInt16(mixed.right[i]), offset); offset += 2;
     }
 
     return buffer;

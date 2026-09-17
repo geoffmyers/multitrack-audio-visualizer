@@ -160,7 +160,8 @@ Pick a preset from the menu to apply a complete look. **Save** stores the
 current settings as a new preset, and **Rename**, **Delete**, **Import**,
 **Export** and **Export All** manage them. Your presets are kept in the
 browser's local storage; the 20 built-in ones are in
-`presets/all-presets.json`.
+`public/presets/all-presets.json`, the one file both the browser (`fetch`)
+and the CLI (`--preset`) read.
 
 ### Exporting from the browser
 
@@ -257,7 +258,7 @@ cli/ ──► CLIAudioEngine / CLIAudioTrack (no DOM) ──► same renderer o
 | `src/ui/` | Playback, per-track, preset and export controls |
 | `src/visualization/`, `src/utils/` | Colours, file loading and time formatting |
 | `cli/` | The command-line exporter and its DOM-free adapters |
-| `presets/`, `public/presets/` | The built-in presets |
+| `public/presets/` | The built-in presets — one file, read by both the browser and the CLI |
 | `public/ffmpeg/` | The ffmpeg WebAssembly core |
 | `docs/` | CLI guide, quick start and visualisation details |
 

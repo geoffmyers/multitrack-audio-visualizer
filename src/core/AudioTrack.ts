@@ -9,13 +9,28 @@ export class AudioTrack {
   public waveformData: Float32Array | null = null;
   public gainNode: GainNode | null = null;
   public sourceNode: AudioBufferSourceNode | null = null;
+  /**
+   * Audio playback/export gain, 0-1. Deliberately separate from `opacity`
+   * (a visual-only setting): both live playback (AudioEngine.play(), via
+   * `gainNode`) and export (VideoExporter.mixAudio(), CLIAudioEngine's
+   * mixTracks()) read this, so opacity can never again leak into audio.
+   */
+  public volume: number;
 
-  constructor(id: string, name: string, buffer: AudioBuffer, color: string, opacity: number = 0.7) {
+  constructor(
+    id: string,
+    name: string,
+    buffer: AudioBuffer,
+    color: string,
+    opacity: number = 0.7,
+    volume: number = 1.0
+  ) {
     this.id = id;
     this.name = name;
     this.buffer = buffer;
     this.color = color;
     this.opacity = opacity;
+    this.volume = Math.max(0, Math.min(1, volume));
   }
 
   get duration(): number {
@@ -28,34 +43,6 @@ export class AudioTrack {
 
   get numberOfChannels(): number {
     return this.buffer.numberOfChannels;
-  }
-
-  /**
-   * Pre-compute downsampled waveform data for efficient rendering
-   * @deprecated Use getWaveformDataForTimeWindow instead for real-time rendering
-   */
-  computeWaveformData(targetWidth: number): void {
-    const channelData = this.buffer.getChannelData(0); // Use first channel
-    const samplesPerPixel = Math.floor(channelData.length / targetWidth);
-    const waveform = new Float32Array(targetWidth);
-
-    for (let i = 0; i < targetWidth; i++) {
-      const start = i * samplesPerPixel;
-      const end = Math.min(start + samplesPerPixel, channelData.length);
-
-      // Find peak amplitude in this window
-      let max = 0;
-      for (let j = start; j < end; j++) {
-        const abs = Math.abs(channelData[j]);
-        if (abs > max) {
-          max = abs;
-        }
-      }
-
-      waveform[i] = max;
-    }
-
-    this.waveformData = waveform;
   }
 
   /**
@@ -283,8 +270,9 @@ export class AudioTrack {
   }
 
   setVolume(volume: number): void {
+    this.volume = Math.max(0, Math.min(1, volume));
     if (this.gainNode) {
-      this.gainNode.gain.value = Math.max(0, Math.min(1, volume));
+      this.gainNode.gain.value = this.volume;
     }
   }
 

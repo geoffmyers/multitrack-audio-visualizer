@@ -1,4 +1,5 @@
 import type { Preset, PresetSettings, PresetCollection, PresetEvent } from '../types/preset.types';
+import { debugLog } from '../utils/debug';
 
 /**
  * Manages user presets: save, load, rename, delete, import, export
@@ -12,7 +13,7 @@ export class PresetManager extends EventTarget {
   constructor() {
     super();
     this.collection = this.loadFromStorage();
-    console.log('[PresetManager] Initialized with', this.collection.presets.length, 'presets');
+    debugLog('[PresetManager] Initialized with', this.collection.presets.length, 'presets');
   }
 
   /**
@@ -22,7 +23,7 @@ export class PresetManager extends EventTarget {
     try {
       // Check if we already have presets (don't overwrite user's presets)
       if (this.collection.presets.length > 0) {
-        console.log('[PresetManager] Skipping built-in presets - user presets already exist');
+        debugLog('[PresetManager] Skipping built-in presets - user presets already exist');
         return;
       }
 
@@ -34,7 +35,7 @@ export class PresetManager extends EventTarget {
 
       const presetsJson = await response.text();
       const importedPresets = this.importPresets(presetsJson);
-      console.log('[PresetManager] Loaded', importedPresets.length, 'built-in presets');
+      debugLog('[PresetManager] Loaded', importedPresets.length, 'built-in presets');
     } catch (error) {
       console.warn('[PresetManager] Failed to load built-in presets:', error);
       // Don't throw - app should work without built-in presets
@@ -80,7 +81,7 @@ export class PresetManager extends EventTarget {
     this.collection.presets.push(preset);
     this.saveToStorage();
     this.dispatchPresetEvent({ type: 'preset-created', preset });
-    console.log('[PresetManager] Created preset:', preset.name);
+    debugLog('[PresetManager] Created preset:', preset.name);
 
     return preset;
   }
@@ -98,7 +99,7 @@ export class PresetManager extends EventTarget {
     preset.updatedAt = Date.now();
     this.saveToStorage();
     this.dispatchPresetEvent({ type: 'preset-updated', preset });
-    console.log('[PresetManager] Updated preset:', preset.name);
+    debugLog('[PresetManager] Updated preset:', preset.name);
   }
 
   /**
@@ -115,7 +116,7 @@ export class PresetManager extends EventTarget {
     preset.updatedAt = Date.now();
     this.saveToStorage();
     this.dispatchPresetEvent({ type: 'preset-updated', preset });
-    console.log('[PresetManager] Renamed preset from', oldName, 'to', newName);
+    debugLog('[PresetManager] Renamed preset from', oldName, 'to', newName);
   }
 
   /**
@@ -137,7 +138,7 @@ export class PresetManager extends EventTarget {
 
     this.saveToStorage();
     this.dispatchPresetEvent({ type: 'preset-deleted', presetId });
-    console.log('[PresetManager] Deleted preset:', preset.name);
+    debugLog('[PresetManager] Deleted preset:', preset.name);
   }
 
   /**
@@ -152,7 +153,7 @@ export class PresetManager extends EventTarget {
     this.collection.activePresetId = presetId;
     this.saveToStorage();
     this.dispatchPresetEvent({ type: 'preset-loaded', preset });
-    console.log('[PresetManager] Loaded preset:', preset.name);
+    debugLog('[PresetManager] Loaded preset:', preset.name);
 
     return { ...preset.settings };
   }
@@ -209,7 +210,7 @@ export class PresetManager extends EventTarget {
 
       this.saveToStorage();
       this.dispatchPresetEvent({ type: 'preset-imported', presets: importedPresets });
-      console.log('[PresetManager] Imported', importedPresets.length, 'preset(s)');
+      debugLog('[PresetManager] Imported', importedPresets.length, 'preset(s)');
 
       return importedPresets;
     } catch (error) {

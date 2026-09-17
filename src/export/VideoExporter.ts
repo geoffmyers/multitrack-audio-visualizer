@@ -4,6 +4,8 @@ import { RenderContext } from '../rendering/RenderContext';
 import { FrameCapture } from './FrameCapture';
 import type { ExportOptions } from '../types/audio.types';
 import type { LayoutMode, AmplitudeMode } from '../types/visualizer.types';
+import { normalizeStereoPeak, floatSampleToInt16 } from '../audio/mixdown';
+import { debugLog, isDebugEnabled } from '../utils/debug';
 
 export class VideoExporter {
   private audioEngine: AudioEngine;
@@ -60,7 +62,7 @@ export class VideoExporter {
           estimate = ` | ETA: ${mins}m ${secs}s`;
         }
 
-        console.log(
+        debugLog(
           `[Export] Progress: ${currentProgress.toFixed(2)}% | Elapsed: ${Math.floor(elapsed)}s${estimate}`
         );
         lastProgress = currentProgress;
@@ -79,7 +81,7 @@ export class VideoExporter {
         );
       }
 
-      console.log('[Export] Starting video export...');
+      debugLog('[Export] Starting video export...');
       logProgress(0, true);
 
       // Initialize worker
@@ -119,7 +121,7 @@ export class VideoExporter {
 
       logProgress(100, true);
       const totalTime = (Date.now() - startTime) / 1000;
-      console.log(`[Export] Export completed successfully in ${Math.floor(totalTime)}s`);
+      debugLog(`[Export] Export completed successfully in ${Math.floor(totalTime)}s`);
 
       onComplete(videoBlob);
     } catch (error) {
@@ -149,7 +151,7 @@ export class VideoExporter {
         reject(error);
       };
 
-      this.worker.postMessage({ type: 'init' });
+      this.worker.postMessage({ type: 'init', debug: isDebugEnabled() });
     });
   }
 
@@ -220,11 +222,18 @@ export class VideoExporter {
       sampleRate
     );
 
-    // Create sources and connect to destination
+    // Create sources and connect to destination through a per-track gain
+    // node set to the track's volume -- never its opacity, which is a
+    // visual-only setting. This is the same value live playback uses
+    // (AudioEngine.play(), via track.gainNode), so an exported video's mix
+    // matches what you heard while previewing it.
     tracks.forEach((track) => {
       const source = offlineContext.createBufferSource();
       source.buffer = track.buffer;
-      source.connect(offlineContext.destination);
+      const gain = offlineContext.createGain();
+      gain.gain.value = track.volume;
+      source.connect(gain);
+      gain.connect(offlineContext.destination);
       source.start(0);
     });
 
@@ -265,17 +274,22 @@ export class VideoExporter {
     writeString(36, 'data');
     view.setUint32(40, length, true);
 
-    // Write interleaved audio data
-    const channels: Float32Array[] = [];
-    for (let i = 0; i < numberOfChannels; i++) {
-      channels.push(buffer.getChannelData(i));
-    }
+    // Write interleaved audio data. Normalize first (shared with the CLI's
+    // mixTracks(), via normalizeStereoPeak) instead of hard-clipping a mix
+    // that went over full scale -- clipping is audible distortion; scaling
+    // the whole mix down by its peak is not.
+    const left = buffer.getChannelData(0);
+    const right = numberOfChannels > 1 ? buffer.getChannelData(1) : left;
+    const { normalized } = normalizeStereoPeak({ left, right });
+    const channels: Float32Array[] =
+      numberOfChannels > 1
+        ? [normalized.left, normalized.right]
+        : [normalized.left];
 
     let offset = 44;
     for (let i = 0; i < buffer.length; i++) {
       for (let channel = 0; channel < numberOfChannels; channel++) {
-        const sample = Math.max(-1, Math.min(1, channels[channel][i]));
-        view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
+        view.setInt16(offset, floatSampleToInt16(channels[channel][i]), true);
         offset += 2;
       }
     }

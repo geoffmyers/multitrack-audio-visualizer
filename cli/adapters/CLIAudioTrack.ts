@@ -22,10 +22,11 @@ export class CLIAudioTrack extends AudioTrack {
     name: string,
     buffer: CLIAudioBuffer,
     color: string,
-    opacity: number = 0.7
+    opacity: number = 0.7,
+    volume: number = 1.0
   ) {
     // Cast CLIAudioBuffer to AudioBuffer for type compatibility
     // This works because CLIAudioBuffer implements the same interface
-    super(id, name, buffer as any, color, opacity);
+    super(id, name, buffer as any, color, opacity, volume);
   }
 }

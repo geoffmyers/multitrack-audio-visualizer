@@ -22,6 +22,9 @@ export interface CLIAudioFileConfig {
   path: string;
   color?: string;
   opacity?: number;
+  /** Audio gain, 0-1 (default 1.0). Deliberately separate from `opacity`,
+   * which only affects the rendered waveform's colour. */
+  volume?: number;
 }
 
 export class ConfigParser {
@@ -45,7 +48,12 @@ export class ConfigParser {
   }
 
   /**
-   * Load all available presets from presets/all-presets.json
+   * Load all available presets from public/presets/all-presets.json -- the
+   * SAME file the browser fetches at runtime (PresetManager.ts:
+   * `fetch('/presets/all-presets.json')`). This used to be two hand-kept
+   * copies (a top-level presets/ for the CLI, public/presets/ for the
+   * browser); nothing enforced they matched, so it is now the one file both
+   * read.
    */
   async loadPresets(): Promise<Preset[]> {
     if (this.presetsCache) {
@@ -53,7 +61,7 @@ export class ConfigParser {
     }
 
     try {
-      const presetsPath = path.join(process.cwd(), 'presets', 'all-presets.json');
+      const presetsPath = path.join(process.cwd(), 'public', 'presets', 'all-presets.json');
       const content = await fs.readFile(presetsPath, 'utf-8');
       this.presetsCache = JSON.parse(content);
       return this.presetsCache!;
@@ -205,13 +213,15 @@ export class ConfigParser {
         return {
           path: file,
           color: this.getDefaultColor(index),
-          opacity: 0.7
+          opacity: 0.7,
+          volume: 1.0
         };
       }
       return {
         path: file.path,
         color: file.color || this.getDefaultColor(index),
-        opacity: file.opacity !== undefined ? file.opacity : 0.7
+        opacity: file.opacity !== undefined ? file.opacity : 0.7,
+        volume: file.volume !== undefined ? file.volume : 1.0
       };
     });
   }

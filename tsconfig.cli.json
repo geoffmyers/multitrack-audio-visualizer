@@ -12,6 +12,7 @@
   },
   "include": [
     "cli/**/*",
+    "src/audio/mixdown.ts",
     "src/core/AudioTrack.ts",
     "src/types/**/*",
     "src/visualization/ColorManager.ts",

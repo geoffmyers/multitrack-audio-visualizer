@@ -9,7 +9,7 @@ A TypeScript browser app with a headless CLI that shares its core.
 | `src/core/` | `AudioEngine` and `AudioTrack` — loading, decoding and synchronised playback of multiple tracks; `PresetManager` for saved looks. |
 | `src/` | Rendering and UI, entered at `main.ts`. |
 | `cli/` | A headless path: `CLIAudioEngine` and `CLIAudioTrack` implement the same interfaces without a DOM, and `CLIVideoExporter` drives export. |
-| `presets/`, `public/ffmpeg/` | Saved visual presets, and the ffmpeg WebAssembly build used for encoding. |
+| `public/presets/`, `public/ffmpeg/` | Saved visual presets (one file, read by both the browser's `fetch` and the CLI's `ConfigParser`), and the ffmpeg WebAssembly build used for encoding. |
 
 ## Notes
 

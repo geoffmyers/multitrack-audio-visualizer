@@ -1,5 +1,6 @@
 import { AudioTrack } from './AudioTrack';
 import type { PlaybackState } from '../types/audio.types';
+import { debugLog } from '../utils/debug';
 
 export class AudioEngine extends EventTarget {
   private audioContext: AudioContext | null = null;
@@ -33,11 +34,16 @@ export class AudioEngine extends EventTarget {
   /**
    * Load a single audio track from a File
    */
-  async loadTrack(file: File, color: string, opacity: number = 0.7): Promise<AudioTrack> {
-    console.log('[AudioEngine] loadTrack() called');
-    console.log('  - File:', file.name);
-    console.log('  - Size:', (file.size / 1024 / 1024).toFixed(2), 'MB');
-    console.log('  - Color:', color);
+  async loadTrack(
+    file: File,
+    color: string,
+    opacity: number = 0.7,
+    volume: number = 1.0
+  ): Promise<AudioTrack> {
+    debugLog('[AudioEngine] loadTrack() called');
+    debugLog('  - File:', file.name);
+    debugLog('  - Size:', (file.size / 1024 / 1024).toFixed(2), 'MB');
+    debugLog('  - Color:', color);
 
     await this.initialize();
 
@@ -46,23 +52,25 @@ export class AudioEngine extends EventTarget {
     const audioBuffer = await this.audioContext!.decodeAudioData(arrayBuffer);
     const loadDuration = performance.now() - loadStartTime;
 
-    console.log('[AudioEngine] Track decoded successfully');
-    console.log('  - Duration:', audioBuffer.duration.toFixed(3), 'seconds');
-    console.log('  - Sample rate:', audioBuffer.sampleRate, 'Hz');
-    console.log('  - Channels:', audioBuffer.numberOfChannels);
-    console.log('  - Load time:', loadDuration.toFixed(0), 'ms');
+    debugLog('[AudioEngine] Track decoded successfully');
+    debugLog('  - Duration:', audioBuffer.duration.toFixed(3), 'seconds');
+    debugLog('  - Sample rate:', audioBuffer.sampleRate, 'Hz');
+    debugLog('  - Channels:', audioBuffer.numberOfChannels);
+    debugLog('  - Load time:', loadDuration.toFixed(0), 'ms');
 
-    const track = new AudioTrack(this.generateTrackId(), file.name, audioBuffer, color, opacity);
+    const track = new AudioTrack(this.generateTrackId(), file.name, audioBuffer, color, opacity, volume);
 
-    // Create gain node for this track
+    // Create gain node for this track, initialised to the track's volume
+    // (opacity never touches this -- see AudioTrack.volume).
     track.gainNode = this.audioContext!.createGain();
+    track.gainNode.gain.value = track.volume;
     track.gainNode.connect(this.masterGain!);
 
     this.tracks.push(track);
 
-    console.log('[AudioEngine] Track added');
-    console.log('  - Track ID:', track.id);
-    console.log('  - Total tracks:', this.tracks.length);
+    debugLog('[AudioEngine] Track added');
+    debugLog('  - Track ID:', track.id);
+    debugLog('  - Total tracks:', this.tracks.length);
 
     this.dispatchEvent(new CustomEvent('trackadded', { detail: track }));
 
@@ -108,9 +116,9 @@ export class AudioEngine extends EventTarget {
    * Play all tracks
    */
   play(): void {
-    console.log('[AudioEngine] play() called');
-    console.log('  - Tracks loaded:', this.tracks.length);
-    console.log('  - AudioContext state:', this.audioContext?.state);
+    debugLog('[AudioEngine] play() called');
+    debugLog('  - Tracks loaded:', this.tracks.length);
+    debugLog('  - AudioContext state:', this.audioContext?.state);
 
     if (!this.audioContext || this.tracks.length === 0) {
       console.warn('[AudioEngine] play() aborted: no context or tracks');
@@ -118,7 +126,7 @@ export class AudioEngine extends EventTarget {
     }
 
     if (this.audioContext.state === 'suspended') {
-      console.log('[AudioEngine] Resuming suspended AudioContext');
+      debugLog('[AudioEngine] Resuming suspended AudioContext');
       this.audioContext.resume();
     }
 
@@ -127,8 +135,8 @@ export class AudioEngine extends EventTarget {
 
     // Create new source nodes for all tracks
     const offset = this.pausedAt;
-    console.log('[AudioEngine] Starting playback from offset:', offset.toFixed(3), 'seconds');
-    console.log('  - AudioContext.currentTime:', this.audioContext.currentTime.toFixed(3));
+    debugLog('[AudioEngine] Starting playback from offset:', offset.toFixed(3), 'seconds');
+    debugLog('  - AudioContext.currentTime:', this.audioContext.currentTime.toFixed(3));
 
     this.tracks.forEach((track, index) => {
       const source = this.audioContext!.createBufferSource();
@@ -137,7 +145,7 @@ export class AudioEngine extends EventTarget {
       source.start(0, offset);
       track.sourceNode = source;
 
-      console.log(
+      debugLog(
         `  - Track ${index + 1} "${track.name}": started at offset ${offset.toFixed(3)}s`
       );
 
@@ -150,14 +158,14 @@ export class AudioEngine extends EventTarget {
 
           // Check if we've actually reached the end (within 0.1s tolerance)
           if (currentTime >= duration - 0.1) {
-            console.log(
+            debugLog(
               `[AudioEngine] Track ${index + 1} reached end naturally, stopping playback`
             );
             this.isPlaying = false;
             this.pausedAt = duration;
             this.dispatchEvent(new Event('ended'));
           } else {
-            console.log(
+            debugLog(
               `[AudioEngine] Track ${index + 1} ended prematurely at ${currentTime.toFixed(3)}s (expected: ${duration.toFixed(3)}s) - ignoring`
             );
           }
@@ -168,10 +176,10 @@ export class AudioEngine extends EventTarget {
     this.isPlaying = true;
     this.startTime = this.audioContext.currentTime - offset;
 
-    console.log('[AudioEngine] Playback started');
-    console.log('  - startTime:', this.startTime.toFixed(3));
-    console.log('  - isPlaying:', this.isPlaying);
-    console.log('  - Duration:', this.getDuration().toFixed(3), 'seconds');
+    debugLog('[AudioEngine] Playback started');
+    debugLog('  - startTime:', this.startTime.toFixed(3));
+    debugLog('  - isPlaying:', this.isPlaying);
+    debugLog('  - Duration:', this.getDuration().toFixed(3), 'seconds');
 
     this.dispatchEvent(new Event('play'));
     this.startTimeUpdate();
@@ -181,9 +189,9 @@ export class AudioEngine extends EventTarget {
    * Pause playback
    */
   pause(): void {
-    console.log('[AudioEngine] pause() called');
-    console.log('  - isPlaying:', this.isPlaying);
-    console.log('  - AudioContext exists:', !!this.audioContext);
+    debugLog('[AudioEngine] pause() called');
+    debugLog('  - isPlaying:', this.isPlaying);
+    debugLog('  - AudioContext exists:', !!this.audioContext);
 
     if (!this.audioContext || !this.isPlaying) {
       console.warn('[AudioEngine] pause() aborted: no context or not playing');
@@ -191,16 +199,16 @@ export class AudioEngine extends EventTarget {
     }
 
     this.pausedAt = this.audioContext.currentTime - this.startTime;
-    console.log('[AudioEngine] Pausing at position:', this.pausedAt.toFixed(3), 'seconds');
-    console.log('  - AudioContext.currentTime:', this.audioContext.currentTime.toFixed(3));
-    console.log('  - startTime:', this.startTime.toFixed(3));
+    debugLog('[AudioEngine] Pausing at position:', this.pausedAt.toFixed(3), 'seconds');
+    debugLog('  - AudioContext.currentTime:', this.audioContext.currentTime.toFixed(3));
+    debugLog('  - startTime:', this.startTime.toFixed(3));
 
     this.stopSources();
     this.isPlaying = false;
 
-    console.log('[AudioEngine] Playback paused');
-    console.log('  - pausedAt:', this.pausedAt.toFixed(3));
-    console.log('  - isPlaying:', this.isPlaying);
+    debugLog('[AudioEngine] Playback paused');
+    debugLog('  - pausedAt:', this.pausedAt.toFixed(3));
+    debugLog('  - isPlaying:', this.isPlaying);
 
     this.dispatchEvent(new Event('pause'));
     this.stopTimeUpdate();
@@ -214,15 +222,15 @@ export class AudioEngine extends EventTarget {
     const currentTime = this.getCurrentTime();
     const duration = this.getDuration();
 
-    console.log('[AudioEngine] seek() called');
-    console.log('  - Requested time:', time.toFixed(3), 'seconds');
-    console.log('  - Current time:', currentTime.toFixed(3), 'seconds');
-    console.log('  - Duration:', duration.toFixed(3), 'seconds');
-    console.log('  - Was playing:', wasPlaying);
+    debugLog('[AudioEngine] seek() called');
+    debugLog('  - Requested time:', time.toFixed(3), 'seconds');
+    debugLog('  - Current time:', currentTime.toFixed(3), 'seconds');
+    debugLog('  - Duration:', duration.toFixed(3), 'seconds');
+    debugLog('  - Was playing:', wasPlaying);
 
     // Stop playback if playing
     if (this.isPlaying) {
-      console.log('[AudioEngine] Stopping playback for seek');
+      debugLog('[AudioEngine] Stopping playback for seek');
       this.stopSources();
       this.isPlaying = false;
       this.stopTimeUpdate();
@@ -232,19 +240,19 @@ export class AudioEngine extends EventTarget {
     const oldPausedAt = this.pausedAt;
     this.pausedAt = Math.max(0, Math.min(time, this.getDuration()));
 
-    console.log('[AudioEngine] Position updated');
-    console.log('  - Old position:', oldPausedAt.toFixed(3), 'seconds');
-    console.log('  - New position:', this.pausedAt.toFixed(3), 'seconds');
-    console.log('  - Clamped:', this.pausedAt !== time ? 'Yes (to fit duration)' : 'No');
+    debugLog('[AudioEngine] Position updated');
+    debugLog('  - Old position:', oldPausedAt.toFixed(3), 'seconds');
+    debugLog('  - New position:', this.pausedAt.toFixed(3), 'seconds');
+    debugLog('  - Clamped:', this.pausedAt !== time ? 'Yes (to fit duration)' : 'No');
 
     this.dispatchEvent(new CustomEvent('seek', { detail: { time: this.pausedAt } }));
 
     // Resume playback if it was playing
     if (wasPlaying) {
-      console.log('[AudioEngine] Resuming playback after seek');
+      debugLog('[AudioEngine] Resuming playback after seek');
       this.play();
     } else {
-      console.log('[AudioEngine] Seek complete (staying paused)');
+      debugLog('[AudioEngine] Seek complete (staying paused)');
     }
   }
 
