@@ -23,6 +23,7 @@
   - [Loading tracks](#loading-tracks)
   - [Playback](#playback)
   - [Styling the tracks](#styling-the-tracks)
+  - [Example workflow](#example-workflow)
   - [Presets](#presets)
   - [Exporting from the browser](#exporting-from-the-browser)
   - [Exporting from the command line](#exporting-from-the-command-line)
@@ -153,6 +154,17 @@ Each track has a **colour** picker, an **opacity** slider and a **×** to remove
 it. The layout menu switches between the five layouts, and the amplitude menu
 chooses between **Individual** (each track scaled to its own peak) and
 **Normalized** (all tracks scaled to the loudest).
+
+### Example workflow
+
+1. Load three WAV files: drums, bass and melody.
+2. Give each a colour (say red, blue and yellow). Darker colours behind and
+   brighter ones in front blend best.
+3. Set each track's opacity; 60–80% works well for overlaid tracks.
+4. Play to preview, then export.
+
+The visualizer keeps 60 fps with eight or more tracks, and a browser export
+takes one to two times the length of the song.
 
 ### Presets
 
